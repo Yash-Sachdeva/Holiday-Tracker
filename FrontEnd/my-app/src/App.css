@@ -1,0 +1,132 @@
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 4rem;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.logo-section h1 {
+  color: #2c3e50;
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 600;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 2rem;
+}
+
+.login-btn {
+  padding: 1rem 2.5rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-btn.hr {
+  background-color: #3498db;
+  color: white;
+  border: none;
+}
+
+.login-btn.employee {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.main-content {
+  flex: 1;
+  padding: 4rem 6rem;
+  width: 100%;
+}
+
+.hero-section {
+  text-align: center;
+  margin: 2rem auto 6rem;
+  padding: 6rem;
+  background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+  border-radius: 16px;
+  color: white;
+}
+
+.hero-section h2 {
+  font-size: 4rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.hero-section p {
+  font-size: 1.8rem;
+  opacity: 0.9;
+  margin: 0 auto;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
+  margin-top: 4rem;
+}
+
+.feature-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card h3 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.feature-card p {
+  color: #666;
+  font-size: 1.3rem;
+  line-height: 1.6;
+}
+
+.footer {
+  width: 100%;
+  text-align: center;
+  padding: 2.5rem;
+  background-color: #ffffff;
+  color: #666;
+  font-size: 1.2rem;
+  border-top: 1px solid #eee;
+}
+
+/* Remove mobile responsive styles since we're focusing on desktop */
+@media (max-width: 768px) {
+  /* Remove these styles to prevent mobile layout */
+}
+
+
+
