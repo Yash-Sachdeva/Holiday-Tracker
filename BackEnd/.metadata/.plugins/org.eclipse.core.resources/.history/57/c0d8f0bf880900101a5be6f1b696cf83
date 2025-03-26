@@ -1,0 +1,26 @@
+package com.example.demo.entities;
+
+import jakarta.persistence.*;
+
+@Entity
+public class HR {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long hrId;
+    
+    @Column(nullable = false, unique = true)
+    private String email;
+    
+    @Column(nullable = false)
+    private String name;
+    
+    @Column(nullable = false)
+    private String password;
+    
+    @Column(nullable = false)
+    private String role = "HR"; 
+    
+    @ManyToOne
+    @JoinColumn(name = "superHrId", nullable = false)
+    private SuperHR superHR;
+}

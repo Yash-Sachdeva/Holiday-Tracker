@@ -1,0 +1,29 @@
+package com.example.demo.service;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.LoginDTO;
+import com.example.demo.entities.Employee;
+import com.example.demo.entities.HR;
+import com.example.demo.repos.HRRepository;
+
+@Service
+public class HRService {
+
+    @Autowired
+    private HRRepository hrRepository;
+
+    public HR registerHR(HR hr) {
+        return hrRepository.save(hr);
+    }
+    public String login(LoginDTO loginDTO) {
+    	HR hr=hrRepository.findByEmail(loginDTO.getEmail());
+    	if(hr==null)
+    			return "User not found!";
+    	if(!hr.getPassword().equals(loginDTO.getPassword()))
+    				return "Invalid password";
+    	return "Login Successful";
+    }
+}

@@ -1,0 +1,30 @@
+package com.example.demo.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.entities.Employee;
+import com.example.demo.service.EmployeeService;
+
+@RestController
+@RequestMapping("/auth")
+public class EmployeeController {
+
+    @Autowired
+    private EmployeeService employeeService;
+
+    @PostMapping("/register/employee")
+    public Employee registerEmployee(@RequestBody Employee employee) {
+        return employeeService.registerEmployee(employee);
+    }
+
+    @GetMapping("/employee/{email}")
+    public Employee getEmployeeByEmail(@PathVariable String email) {
+        return employeeService.getEmployeeByEmail(email);
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "Welcome to Employee Dashboard!";
+    }
+}

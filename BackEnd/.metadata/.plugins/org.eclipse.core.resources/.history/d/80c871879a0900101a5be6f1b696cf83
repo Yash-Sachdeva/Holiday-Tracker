@@ -1,0 +1,31 @@
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())  // Disable CSRF for simplicity
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/login", "/auth/register/**").permitAll()  // Public endpoints
+                .anyRequest().authenticated()  // Secure all other endpoints
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) // Use session-based authentication
+            .httpBasic(httpBasic -> httpBasic.withDefaults())  // Enable basic authentication
+            .logout(logout -> logout
+                .logoutUrl("/auth/logout")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    SecurityContextHolder.clearContext(); // Clear authentication data
+                    response.setStatus(200);
+                    response.getWriter().write("Logout successful");
+                })
+            );
+        return http.build();
+    }
+}

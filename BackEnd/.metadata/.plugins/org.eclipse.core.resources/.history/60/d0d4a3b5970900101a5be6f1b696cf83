@@ -1,0 +1,28 @@
+package com.example.demo.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.LoginDTO;
+import com.example.demo.entities.HR;
+import com.example.demo.entities.SuperHR;
+import com.example.demo.repos.SuperHRRepository;
+
+@Service
+public class SuperHRService {
+
+    @Autowired
+    private SuperHRRepository superHRRepository;
+
+    public SuperHR registerSuperHR(SuperHR superHR) {
+        return superHRRepository.save(superHR);
+    }
+    public String login(LoginDTO loginDTO) {
+    	SuperHR superHR=superHRRepository.findByEmail(loginDTO.getEmail());
+    	if(superHR==null)
+    			return "User not found!";
+    	if(!superHR.getPassword().equals(loginDTO.getPassword()))
+    				return "Invalid password";
+    	return "Login Successful";
+    
+}
