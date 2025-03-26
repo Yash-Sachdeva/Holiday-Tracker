@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,9 @@ public class EmployeeService {
     
     public Employee getEmployeeByEmail(String email) {
         return employeeRepository.findByEmail(email);
+    }
+    
+    public List<Employee> getAllEmployee(){
+    	return employeeRepository.findAll();
     }
 }

@@ -2,6 +2,9 @@ package com.example.demo.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.dto.LoginDTO;
@@ -57,5 +60,10 @@ public class EmployeeController {
         } else {
             return null; 
         }
+    }
+    
+    @GetMapping("/all/employee")
+    public List<Employee> getAllEmployees(){
+    	return employeeService.getAllEmployee();
     }
 }
