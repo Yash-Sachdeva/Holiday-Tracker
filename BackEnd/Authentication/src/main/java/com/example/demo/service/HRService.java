@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,10 @@ public class HRService {
     
     public HR getHRByEmail(String email) {
     	return hrRepository.findByEmail(email);
+    }
+    
+    public List<HR> getAllHR(){
+    	return hrRepository.findAll();
     }
     
 }

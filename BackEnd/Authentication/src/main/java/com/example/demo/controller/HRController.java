@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +36,7 @@ public class HRController {
         if (hr != null) {
             HttpSession session = request.getSession(true); 
             session.setAttribute("user", hr); 
+            session.setAttribute("role", hr.getRole());
             return "Login successful!";
         } else {
             return "Invalid email or password";
@@ -43,8 +46,9 @@ public class HRController {
     @GetMapping("/session/hr")
     public String checkSession(HttpSession session) {
         HR user = (HR) session.getAttribute("user");
+        String role = (String) session.getAttribute("role");
         if (user != null) {
-            return "User is logged in: " + user.getEmail();
+            return "User is logged in: " + role;
         } else {
             return "No active session found";
         }
@@ -55,7 +59,12 @@ public class HRController {
         session.invalidate(); 
         return "Logged out successfully";
     }
-
+    
+    @GetMapping("/all/hr")
+    public List<HR> getAllHR(){
+    	return hrService.getAllHR();
+    }
+    
     @GetMapping("/hr/{email}")
     public HR getHRByEmail(@PathVariable String email, HttpSession session) {
         HR user = (HR) session.getAttribute("user");

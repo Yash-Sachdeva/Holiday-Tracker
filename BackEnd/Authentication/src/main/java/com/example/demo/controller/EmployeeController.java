@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.dto.LoginDTO;
 import com.example.demo.entities.Employee;
+import com.example.demo.entities.HR;
 import com.example.demo.service.EmployeeService;
 
 @RestController
@@ -19,8 +20,14 @@ public class EmployeeController {
     private EmployeeService employeeService;
  
     @PostMapping("/register/employee")
-    public Employee registerEmployee(@RequestBody Employee employee) {
-        return employeeService.registerEmployee(employee);
+    public String registerEmployee(HttpSession session,@RequestBody Employee employee) {
+    	String role = (String)session.getAttribute("role");
+    	if ("HR".equalsIgnoreCase(role)) {
+        	employeeService.registerEmployee(employee);
+        	return "Employee Registered Successfully";
+        }        			
+        else
+        	return "You do not have authorization to add employee";
     }
 
     @PostMapping("/login/employee")
@@ -30,6 +37,7 @@ public class EmployeeController {
         if (employee != null) {
             HttpSession session = request.getSession(true); 
             session.setAttribute("user", employee); 
+            session.setAttribute("role", employee.getRole()); 
             return "Login successful!";
         } else {
             return "Invalid email or password";
