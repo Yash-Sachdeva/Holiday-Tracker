@@ -1,0 +1,105 @@
+package com.example.demo.controller;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.dto.LoginDTO;
+import com.example.demo.entities.Employee;
+import com.example.demo.entities.HR;
+import com.example.demo.service.EmployeeService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/auth")
+public class EmployeeController {
+
+    @Autowired
+    private EmployeeService employeeService;
+
+    // ✅ **Register Employee (Only HR Allowed)**
+    @PostMapping("/register/employee")
+    public ResponseEntity<String> registerEmployee(HttpSession session, @RequestBody Employee employee) {
+        HR hr = (HR) session.getAttribute("userHR");
+        if (hr==null || !"HR".equalsIgnoreCase(hr.getRole())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have authorization to add an employee");
+        }
+        employee.setHrId(hr.getHrId());
+        employeeService.registerEmployee(employee);
+        return ResponseEntity.ok("Employee Registered Successfully");
+    }
+
+    // ✅ **Employee Login**
+    @PostMapping("/login/employee")
+    public ResponseEntity<String> loginEmployee(@RequestBody LoginDTO loginDTO, HttpServletRequest request) {
+        Employee employee = employeeService.authenticate(loginDTO.getEmail(), loginDTO.getPassword());
+
+        if (employee == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        }
+
+        HttpSession session = request.getSession(true);
+        session.setAttribute("userEmployee", employee);
+        
+        return ResponseEntity.ok("Login successful!");
+    }
+
+    // ✅ **Check Active Session**
+    @GetMapping("/session/employee")
+    public ResponseEntity<String> checkSession(HttpSession session) {
+        Employee user = (Employee) session.getAttribute("userEmployee");
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session found");
+        }
+        return ResponseEntity.ok("User is logged in: " + user.getEmail());
+    }
+
+    // ✅ **Logout Employee**
+    @GetMapping("/logout/employee")
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("Logged out successfully");
+    }
+
+    
+
+    // ✅ **Update Employee (Only HR Allowed)**
+    @PutMapping("/update/employee")
+    public ResponseEntity<String> updateEmployee(HttpSession session, @RequestBody Employee e) {
+        HR hr = (HR)session.getAttribute("userHR");
+    	if (!"HR".equalsIgnoreCase(hr.getRole())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have authorization to update an employee");
+        }
+
+        employeeService.registerEmployee(e);
+        return ResponseEntity.ok("Employee Updated Successfully");
+    }
+
+    // ✅ **Get All Employees**
+    @GetMapping("/all/employee")
+    public ResponseEntity<List<Employee>> getAllEmployees(HttpSession session) {
+    	HR user = (HR) session.getAttribute("userHR");
+        
+        if (user == null || !user.getRole().equalsIgnoreCase("HR")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        return ResponseEntity.ok(employeeService.getAllEmployeeUnderId(user.getHrId()));
+    }
+    
+    @DeleteMapping("/delete/employee")
+    public ResponseEntity<String> deleteEmployee(HttpSession session,@RequestBody Employee e){
+    	HR user = (HR) session.getAttribute("userHR");
+        
+        if (user == null || !user.getRole().equals("HR")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        return ResponseEntity.ok(employeeService.deleteEmployee(e));
+    }
+}

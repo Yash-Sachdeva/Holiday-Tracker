@@ -16,6 +16,7 @@ public class HRService {
     private HRRepository hrRepository;
 
     public HR registerHR(HR hr) {
+    	hr.setEmail(hr.getEmail().toLowerCase());
         return hrRepository.save(hr);
     }
     public HR authenticate(String email, String password) {

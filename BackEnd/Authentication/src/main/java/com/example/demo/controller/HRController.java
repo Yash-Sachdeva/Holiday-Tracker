@@ -35,8 +35,7 @@ public class HRController {
 
         if (hr != null) {
             HttpSession session = request.getSession(true); 
-            session.setAttribute("user", hr); 
-            session.setAttribute("role", hr.getRole());
+            session.setAttribute("userHR", hr);
             return "Login successful!";
         } else {
             return "Invalid email or password";
@@ -45,10 +44,9 @@ public class HRController {
 
     @GetMapping("/session/hr")
     public String checkSession(HttpSession session) {
-        HR user = (HR) session.getAttribute("user");
-        String role = (String) session.getAttribute("role");
+        HR user = (HR) session.getAttribute("userHR");
         if (user != null) {
-            return "User is logged in: " + role;
+            return "User is logged in: " + user.getName();
         } else {
             return "No active session found";
         }
@@ -65,13 +63,4 @@ public class HRController {
     	return hrService.getAllHR();
     }
     
-    @GetMapping("/hr/{email}")
-    public HR getHRByEmail(@PathVariable String email, HttpSession session) {
-        HR user = (HR) session.getAttribute("user");
-        if (user != null) {
-            return hrService.getHRByEmail(email);
-        } else {
-            return null; 
-        }
-    }
 }

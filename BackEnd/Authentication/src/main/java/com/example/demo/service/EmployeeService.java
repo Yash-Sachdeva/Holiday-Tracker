@@ -15,7 +15,8 @@ public class EmployeeService {
     private EmployeeRepository employeeRepository;
 
     public Employee registerEmployee(Employee employee) {
-        return employeeRepository.save(employee);
+        employee.setEmail(employee.getEmail().toLowerCase());
+    	return employeeRepository.save(employee);
     }
 
     public Employee authenticate(String email, String password) {
@@ -30,7 +31,16 @@ public class EmployeeService {
         return employeeRepository.findByEmail(email);
     }
     
-    public List<Employee> getAllEmployee(){
-    	return employeeRepository.findAll();
+    public List<Employee> getAllEmployeeUnderId(Long id){
+    	return employeeRepository.findAllByHrId(id);
+    }
+    
+    public String deleteEmployee(Employee e) {
+    	if(employeeRepository.findByEmail(e.getEmail())==null)
+    		return "Employee Not Found";
+    	else {
+    		employeeRepository.delete(e);
+    		return "Employee Deleted Successfully";
+    	}    		
     }
 }
