@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './EmpLogin.css';
 
 const EmpLogin = () => {
@@ -9,6 +10,12 @@ const EmpLogin = () => {
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login, isAuthenticated, userRole } = useAuth();
+
+  // Redirect if already authenticated as employee
+  if (isAuthenticated && userRole === 'EMPLOYEE') {
+    return <Navigate to="/employee-dashboard" />;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,22 +28,28 @@ const EmpLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
     try {
-      const response = await fetch('http://localhost:8080/auth/login/employee', 
-        {        method: 'POST',
-                 headers: 
-                 {          
-                    'Content-Type': 'application/json',
-                  },        body: JSON.stringify(formData),
-        credentials: 'include'      });
-      if (response.ok) {
-        const data = await response.text();        if (data === "Login successful!") {
-          navigate('/employee-dashboard'); // Navigate to employee dashboard after successful login        } else {
-          setError(data);        }
-      } 
-      else {        setError('Login failed. Please try again.');
-      }    } catch (err) {
-      setError('Network error. Please try again later.');    }
+      const response = await fetch('http://localhost:8080/auth/login/employee', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+        credentials: 'include'
+      });
+
+      const data = await response.text();
+
+      if (response.ok && data === "Login successful!") {
+        login('EMPLOYEE');
+        navigate('/employee-dashboard');
+      } else {
+        setError('Invalid credentials. Please try again.');
+      }
+    } catch (err) {
+      setError('Network error. Please try again later.');
+    }
   };
 
   return (
