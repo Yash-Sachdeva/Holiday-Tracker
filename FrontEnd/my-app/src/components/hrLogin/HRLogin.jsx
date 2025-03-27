@@ -1,27 +1,28 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './HRLogin.css';
 
 const HRLogin = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+    
     try {
       const response = await fetch('http://localhost:8080/auth/login/hr', {
         method: 'POST',
@@ -32,18 +33,17 @@ const HRLogin = () => {
         credentials: 'include'
       });
 
-      if (response.ok) {
-        const data = await response.text();
-        if (data === "Login successful!") {
-          navigate('/hr-dashboard'); // Navigate to HR dashboard after successful login
-        } else {
-          setError(data);
-        }
+      const data = await response.text();
+
+      if (response.ok && data === "Login successful!") {
+        login('HR');
+        navigate('/hr-dashboard');
       } else {
-        setError('Login failed. Please try again.');
+        setError('Invalid credentials. Please try again.');
       }
     } catch (err) {
       setError('Network error. Please try again later.');
+      console.error('Login error:', err);
     }
   };
 
@@ -88,3 +88,6 @@ const HRLogin = () => {
 };
 
 export default HRLogin;
+
+
+

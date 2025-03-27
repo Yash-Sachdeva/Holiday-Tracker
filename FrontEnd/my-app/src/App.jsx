@@ -1,9 +1,13 @@
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 import HRLogin from './components/hrLogin/HRLogin';
 import EmpLogin from './components/empLogin/EmpLogin';
+import HRDashboard from './components/hrDashboard/HRDashboard';
+import EmployeeDashboard from './components/employeeDashboard/EmployeeDashboard';
 
-// Create a separate component for the home page content
+// Create HomePage as a separate component
 const HomePage = () => {
   const navigate = useNavigate();
 
@@ -67,15 +71,44 @@ const HomePage = () => {
   );
 };
 
-function App() {
+// Wrap HomePage in a component that has access to router context
+const HomePageWrapper = () => {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/hr-login" element={<HRLogin />} />
-        <Route path="/employee-login" element={<EmpLogin />} />
       </Routes>
     </Router>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/hr-login" element={<HRLogin />} />
+          <Route path="/employee-login" element={<EmpLogin />} />
+          <Route 
+            path="/hr-dashboard" 
+            element={
+              <ProtectedRoute requiredRole="HR">
+                <HRDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/employee-dashboard" 
+            element={
+              <ProtectedRoute requiredRole="EMPLOYEE">
+                <EmployeeDashboard />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
