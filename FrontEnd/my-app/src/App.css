@@ -11,30 +11,44 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 4rem;
+  padding: 1rem 4rem;
   background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .logo-section h1 {
   color: #2c3e50;
   margin: 0;
-  font-size: 2.5rem;
-  font-weight: 600;
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #2c3e50, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .nav-buttons {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .login-btn {
-  padding: 1rem 2.5rem;
-  border-radius: 8px;
-  font-size: 1.2rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .login-btn.hr {
@@ -51,82 +65,174 @@
 
 .login-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .main-content {
-  flex: 1;
-  padding: 4rem 6rem;
+  margin-top: 64px;
+  padding: 2rem 4rem;
   width: 100%;
 }
 
 .hero-section {
   text-align: center;
-  margin: 2rem auto 6rem;
-  padding: 6rem;
+  margin: 2rem auto 4rem;
+  padding: 4rem 2rem;
   background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
   border-radius: 16px;
   color: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .hero-section h2 {
-  font-size: 4rem;
-  margin-bottom: 2rem;
-  font-weight: 600;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 }
 
 .hero-section p {
-  font-size: 1.8rem;
+  font-size: 1.1rem;
   opacity: 0.9;
   margin: 0 auto;
+  max-width: 600px;
+  line-height: 1.6;
 }
 
 .features-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 3rem;
-  margin-top: 4rem;
+  gap: 2rem;
+  margin-top: 3rem;
 }
 
 .feature-card {
   background: white;
-  padding: 3rem;
+  padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #3498db, #2ecc71);
+  transform: scaleX(0);
   transition: transform 0.3s ease;
+  transform-origin: left;
 }
 
 .feature-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+}
+
+.feature-card:hover::before {
+  transform: scaleX(1);
 }
 
 .feature-card h3 {
   color: #2c3e50;
-  margin-bottom: 1.5rem;
-  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+  font-size: 1.2rem;
   font-weight: 600;
 }
 
 .feature-card p {
   color: #666;
-  font-size: 1.3rem;
-  line-height: 1.6;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .footer {
   width: 100%;
   text-align: center;
-  padding: 2.5rem;
+  padding: 1.5rem;
   background-color: #ffffff;
   color: #666;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   border-top: 1px solid #eee;
+  margin-top: auto;
 }
 
-/* Remove mobile responsive styles since we're focusing on desktop */
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin: 3rem auto;
+  max-width: 1000px;
+}
+
+.stat-card {
+  text-align: center;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #3498db;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+@media (max-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .main-content {
+    padding: 2rem;
+  }
+  
+  .header {
+    padding: 1rem 2rem;
+  }
+}
+
 @media (max-width: 768px) {
-  /* Remove these styles to prevent mobile layout */
+  .stats-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .hero-section h2 {
+    font-size: 2rem;
+  }
+  
+  .hero-section p {
+    font-size: 1rem;
+  }
 }
-
-
 
