@@ -1,14 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import './EmployeeDashboard.css';
 
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const { logout, isAuthenticated, userRole, checkSession } = useAuth();
   const [error, setError] = useState('');
-  const [userName, setUserName] = useState('John Doe'); // Replace with actual user data
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [userData, setUserData] = useState({
+    name: 'John Doe',
+    email: 'john@example.com',
+    department: 'Engineering',
+    position: 'Software Developer',
+    joinDate: '01/01/2023',
+    leaveBalance: 15,
+  });
+  const [holidays, setHolidays] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [holidayDetails, setHolidayDetails] = useState(null);
 
   useEffect(() => {
     const verifyAuth = async () => {
@@ -21,14 +32,42 @@ const EmployeeDashboard = () => {
     };
     
     verifyAuth();
+    fetchUserData();
+    fetchHolidays();
+
     const sessionInterval = setInterval(checkSession, 5 * 60 * 1000);
-    const timeInterval = setInterval(() => setCurrentTime(new Date()), 1000);
-    
-    return () => {
-      clearInterval(sessionInterval);
-      clearInterval(timeInterval);
-    };
+    return () => clearInterval(sessionInterval);
   }, [isAuthenticated, userRole, navigate, checkSession]);
+
+  const fetchUserData = async () => {
+    try {
+      // Replace with actual API call
+      const response = await fetch('http://localhost:8080/api/employee/profile', {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUserData(data);
+      }
+    } catch (error) {
+      setError('Failed to fetch user data');
+    }
+  };
+
+  const fetchHolidays = async () => {
+    try {
+      // Replace with actual API call
+      const response = await fetch('http://localhost:8080/api/holidays', {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setHolidays(data);
+      }
+    } catch (error) {
+      setError('Failed to fetch holidays');
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -45,8 +84,18 @@ const EmployeeDashboard = () => {
       }
     } catch (error) {
       setError('Network error during logout. Please try again.');
-      console.error('Logout failed:', error);
     }
+  };
+
+  const tileClassName = ({ date }) => {
+    const holiday = holidays.find(h => new Date(h.date).toDateString() === date.toDateString());
+    return holiday ? 'holiday-tile' : null;
+  };
+
+  const handleDateClick = (date) => {
+    const holiday = holidays.find(h => new Date(h.date).toDateString() === date.toDateString());
+    setSelectedDate(date);
+    setHolidayDetails(holiday);
   };
 
   if (!isAuthenticated || userRole !== 'EMPLOYEE') {
@@ -54,80 +103,67 @@ const EmployeeDashboard = () => {
   }
 
   return (
-    <div className="dashboard-container">
-      <nav className="dashboard-nav">
-        <div className="nav-left">
-          <h1>Employee Dashboard</h1>
-          <span className="current-time">
-            {currentTime.toLocaleTimeString()}
-          </span>
+    <div className="dashboard-layout">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <div className="user-profile">
+          <div className="profile-image">
+            <img src={userData.profileImage || '/default-avatar.png'} alt="Profile" />
+          </div>
+          <h2>{userData.name}</h2>
+          <p className="user-title">{userData.position}</p>
         </div>
-        <div className="nav-right">
-          <div className="user-info">
-            <span className="user-name">{userName}</span>
-            <button onClick={handleLogout} className="logout-btn">
-              Logout
-            </button>
+
+        <div className="user-info-section">
+          <div className="info-item">
+            <label>Department</label>
+            <span>{userData.department}</span>
+          </div>
+          <div className="info-item">
+            <label>Email</label>
+            <span>{userData.email}</span>
+          </div>
+          <div className="info-item">
+            <label>Join Date</label>
+            <span>{userData.joinDate}</span>
+          </div>
+          <div className="info-item highlight">
+            <label>Leave Balance</label>
+            <span>{userData.leaveBalance} days</span>
           </div>
         </div>
-      </nav>
 
-      <div className="dashboard-content">
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
+      </aside>
+
+      {/* Main Content */}
+      <main className="main-content">
+        <div className="calendar-section">
+          <h2>Holiday Calendar</h2>
+          <Calendar
+            onChange={handleDateClick}
+            value={selectedDate}
+            tileClassName={tileClassName}
+          />
+          
+          {holidayDetails && (
+            <div className="holiday-popup">
+              <h3>{holidayDetails.name}</h3>
+              <p>{holidayDetails.description}</p>
+              <p>Date: {new Date(holidayDetails.date).toLocaleDateString()}</p>
+            </div>
+          )}
+        </div>
+
         {error && <div className="error-message">{error}</div>}
-        
-        <div className="welcome-section">
-          <h2>Welcome back, {userName}!</h2>
-          <p>Here's your overview for today</p>
-        </div>
-
-        <div className="dashboard-grid">
-          <div className="dashboard-card">
-            <div className="card-icon leave-icon">📅</div>
-            <h3>Leave Management</h3>
-            <p>Request and track your leave applications</p>
-            <button className="action-btn">Manage Leave</button>
-          </div>
-
-          <div className="dashboard-card">
-            <div className="card-icon attendance-icon">⏰</div>
-            <h3>Attendance</h3>
-            <p>View your attendance records</p>
-            <button className="action-btn">View Records</button>
-          </div>
-
-          <div className="dashboard-card">
-            <div className="card-icon profile-icon">👤</div>
-            <h3>My Profile</h3>
-            <p>Update your personal information</p>
-            <button className="action-btn">Edit Profile</button>
-          </div>
-
-          <div className="dashboard-card">
-            <div className="card-icon payroll-icon">💰</div>
-            <h3>Payroll</h3>
-            <p>Access your salary statements</p>
-            <button className="action-btn">View Payslips</button>
-          </div>
-        </div>
-
-        <div className="quick-stats">
-          <div className="stat-card">
-            <h4>Leave Balance</h4>
-            <p className="stat-number">15 days</p>
-          </div>
-          <div className="stat-card">
-            <h4>This Month</h4>
-            <p className="stat-number">Present: 18 days</p>
-          </div>
-          <div className="stat-card">
-            <h4>Pending Requests</h4>
-            <p className="stat-number">2</p>
-          </div>
-        </div>
-      </div>
+      </main>
     </div>
   );
 };
 
 export default EmployeeDashboard;
+
+
 

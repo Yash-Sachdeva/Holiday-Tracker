@@ -3,8 +3,9 @@ package com.example.demo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,32 +31,33 @@ public class HRController {
     }
 
     @PostMapping("/login/hr")
-    public String loginEmployee(@RequestBody LoginDTO loginDTO, HttpServletRequest request) {
+    public ResponseEntity<String> loginHR(@RequestBody LoginDTO loginDTO, HttpServletRequest request) {
         HR hr = hrService.authenticate(loginDTO.getEmail(), loginDTO.getPassword());
 
         if (hr != null) {
-            HttpSession session = request.getSession(true); 
-            session.setAttribute("userHR", hr);
-            return "Login successful!";
+            HttpSession session = request.getSession(true);
+            session.setAttribute("userHR", hr);  // Using "userHR" consistently
+            session.setAttribute("role", "HR");
+            return ResponseEntity.ok("Login successful!");
         } else {
-            return "Invalid email or password";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }
     }
 
     @GetMapping("/session/hr")
-    public String checkSession(HttpSession session) {
-        HR user = (HR) session.getAttribute("userHR");
-        if (user != null) {
-            return "User is logged in: " + user.getName();
-        } else {
-            return "No active session found";
+    public ResponseEntity<String> checkSession(HttpSession session) {
+        HR user = (HR) session.getAttribute("userHR");  // Using "userHR" consistently
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session found");
         }
+        return ResponseEntity.ok("User is logged in: " + user.getName());
     }
 
     @GetMapping("/logout/hr")
-    public String logout(HttpSession session) {
-        session.invalidate(); 
-        return "Logged out successfully";
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("Logged out successfully");
     }
     
     @GetMapping("/all/hr")

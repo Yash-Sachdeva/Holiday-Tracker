@@ -1,22 +1,28 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './HRLogin.css';
 
 const HRLogin = () => {
-  const navigate = useNavigate();
-  const { login } = useAuth();
-  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { login, isAuthenticated, userRole } = useAuth();
+
+  // Redirect if already authenticated as HR
+  if (isAuthenticated && userRole === 'HR') {
+    return <Navigate to="/hr-dashboard" />;
+  }
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -43,7 +49,6 @@ const HRLogin = () => {
       }
     } catch (err) {
       setError('Network error. Please try again later.');
-      console.error('Login error:', err);
     }
   };
 
