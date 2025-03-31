@@ -23,7 +23,7 @@ const HomePage = () => {
         </nav>
       </header>
 
-      <main className="main-content">
+      <main className="home-main-content">
         <section className="hero-section">
           <h2>Streamline Holiday Management</h2>
           <p>Transform your organization's leave management with our intuitive and powerful holiday tracking system</p>
@@ -91,7 +91,7 @@ function App() {
           <Route path="/hr-login" element={<HRLogin />} />
           <Route path="/employee-login" element={<EmpLogin />} />
           <Route 
-            path="/hr-dashboard" 
+            path="/hr-dashboard/*" 
             element={
               <ProtectedRoute requiredRole="HR">
                 <HRDashboard />
@@ -99,7 +99,7 @@ function App() {
             } 
           />
           <Route 
-            path="/employee-dashboard" 
+            path="/employee-dashboard/*" 
             element={
               <ProtectedRoute requiredRole="EMPLOYEE">
                 <EmployeeDashboard />
@@ -113,6 +113,10 @@ function App() {
 }
 
 export default App;
+
+
+
+
 
 
 
