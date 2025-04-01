@@ -5,6 +5,15 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './EmployeeDashboard.css';
 
+const MOCK_HOLIDAYS = [
+  {
+    id: 1,
+    name: "New Year's Day",
+    date: "2025-04-08",
+    description: "New Year's Day Celebration"
+  }
+];
+
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const { logout, isAuthenticated, userRole, checkSession } = useAuth();
@@ -20,6 +29,8 @@ const EmployeeDashboard = () => {
   const [holidays, setHolidays] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [holidayDetails, setHolidayDetails] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [upcomingHolidays, setUpcomingHolidays] = useState([]);
 
   useEffect(() => {
     const verifyAuth = async () => {
@@ -39,6 +50,18 @@ const EmployeeDashboard = () => {
     return () => clearInterval(sessionInterval);
   }, [isAuthenticated, userRole, navigate, checkSession]);
 
+  useEffect(() => {
+    // Set upcoming holidays - next 3 holidays
+    if (holidays.length) {
+      const today = new Date();
+      const upcoming = holidays
+        .filter(h => new Date(h.date) >= today)
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .slice(0, 3);
+      setUpcomingHolidays(upcoming);
+    }
+  }, [holidays]);
+
   const fetchUserData = async () => {
     try {
       // Replace with actual API call
@@ -56,14 +79,29 @@ const EmployeeDashboard = () => {
 
   const fetchHolidays = async () => {
     try {
-      // Replace with actual API call
+      // Comment out the API call
+      /*
       const response = await fetch('http://localhost:8080/api/holidays', {
         credentials: 'include'
       });
       if (response.ok) {
         const data = await response.json();
         setHolidays(data);
-      }
+      */
+      
+      // Use hardcoded data instead
+      setHolidays(MOCK_HOLIDAYS);
+      
+      // Create events for the calendar view
+      const eventsData = MOCK_HOLIDAYS.map(holiday => ({
+        id: holiday.id,
+        type: 'holiday',
+        title: holiday.name,
+        date: new Date(holiday.date),
+        description: holiday.description
+      }));
+      setEvents(eventsData);
+      
     } catch (error) {
       setError('Failed to fetch holidays');
     }
@@ -87,15 +125,53 @@ const EmployeeDashboard = () => {
     }
   };
 
-  const tileClassName = ({ date }) => {
-    const holiday = holidays.find(h => new Date(h.date).toDateString() === date.toDateString());
-    return holiday ? 'holiday-tile' : null;
+  const tileClassName = ({ date, view }) => {
+    if (view !== 'month') return null;
+    
+    const dateString = date.toDateString();
+    
+    // Check if date is today
+    const isToday = new Date().toDateString() === dateString;
+    
+    // Check if date is a holiday
+    const holiday = holidays.find(h => new Date(h.date).toDateString() === dateString);
+    
+    // Check if date is weekend
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+    
+    if (holiday) return 'holiday-tile';
+    if (isToday) return 'today-tile';
+    if (isWeekend) return 'weekend-tile';
+    return null;
+  };
+
+  const tileContent = ({ date, view }) => {
+    if (view !== 'month') return null;
+    
+    const dateEvents = events.filter(
+      event => event.date.toDateString() === date.toDateString()
+    );
+    
+    if (dateEvents.length > 0) {
+      return (
+        <div className="event-indicator">
+          {dateEvents.map(event => (
+            <div key={event.id} className={`indicator ${event.type}`} title={event.title}></div>
+          ))}
+        </div>
+      );
+    }
+    return null;
   };
 
   const handleDateClick = (date) => {
     const holiday = holidays.find(h => new Date(h.date).toDateString() === date.toDateString());
     setSelectedDate(date);
     setHolidayDetails(holiday);
+  };
+
+  const formatMonthYear = (locale, date) => {
+    return date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
   };
 
   if (!isAuthenticated || userRole !== 'EMPLOYEE') {
@@ -140,21 +216,89 @@ const EmployeeDashboard = () => {
 
       {/* Main Content */}
       <main className="main-content">
-        <div className="calendar-section">
-          <h2>Holiday Calendar</h2>
-          <Calendar
-            onChange={handleDateClick}
-            value={selectedDate}
-            tileClassName={tileClassName}
-          />
-          
-          {holidayDetails && (
-            <div className="holiday-popup">
-              <h3>{holidayDetails.name}</h3>
-              <p>{holidayDetails.description}</p>
-              <p>Date: {new Date(holidayDetails.date).toLocaleDateString()}</p>
+        <div className="dashboard-header">
+          <h1>Employee Dashboard</h1>
+          <p className="welcome-message">Welcome back, {userData.name}!</p>
+        </div>
+
+        <div className="dashboard-grid">
+          <div className="calendar-section">
+            <div className="calendar-card">
+              <div className="card-header">
+                <h2>Company Calendar</h2>
+                <div className="calendar-legend">
+                  <span className="legend-item"><span className="dot holiday-dot"></span> Holiday</span>
+                  <span className="legend-item"><span className="dot today-dot"></span> Today</span>
+                  <span className="legend-item"><span className="dot weekend-dot"></span> Weekend</span>
+                </div>
+              </div>
+              
+              <Calendar
+                onChange={handleDateClick}
+                value={selectedDate}
+                tileClassName={tileClassName}
+                tileContent={tileContent}
+                formatMonthYear={formatMonthYear}
+                nextLabel={<span className="calendar-nav">›</span>}
+                prevLabel={<span className="calendar-nav">‹</span>}
+                next2Label={<span className="calendar-nav">»</span>}
+                prev2Label={<span className="calendar-nav">«</span>}
+                showNeighboringMonth={false}
+                className="custom-calendar"
+              />
             </div>
-          )}
+          </div>
+
+          <div className="date-details-section">
+            <div className="date-details-card">
+              <h3>Selected Date</h3>
+              <div className="selected-date">
+                <div className="date-number">{selectedDate.getDate()}</div>
+                <div className="date-info">
+                  <span className="date-month">
+                    {selectedDate.toLocaleDateString('en-US', { month: 'long' })}
+                  </span>
+                  <span className="date-year">{selectedDate.getFullYear()}</span>
+                </div>
+              </div>
+
+              {holidayDetails ? (
+                <div className="holiday-details">
+                  <div className="holiday-badge">Holiday</div>
+                  <h4>{holidayDetails.name}</h4>
+                  <p>{holidayDetails.description}</p>
+                </div>
+              ) : (
+                <p className="no-events">No events on this date</p>
+              )}
+            </div>
+
+            <div className="upcoming-holidays-card">
+              <h3>Upcoming Holidays</h3>
+              {upcomingHolidays.length > 0 ? (
+                <ul className="upcoming-list">
+                  {upcomingHolidays.map((holiday, index) => (
+                    <li key={index} className="upcoming-item">
+                      <div className="upcoming-date">
+                        {new Date(holiday.date).toLocaleDateString('en-US', { 
+                          day: 'numeric',
+                          month: 'short'
+                        })}
+                      </div>
+                      <div className="upcoming-details">
+                        <strong>{holiday.name}</strong>
+                        <span>
+                          {new Date(holiday.date).toLocaleDateString('en-US', { weekday: 'long' })}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="no-events">No upcoming holidays</p>
+              )}
+            </div>
+          </div>
         </div>
 
         {error && <div className="error-message">{error}</div>}
@@ -164,6 +308,4 @@ const EmployeeDashboard = () => {
 };
 
 export default EmployeeDashboard;
-
-
 
