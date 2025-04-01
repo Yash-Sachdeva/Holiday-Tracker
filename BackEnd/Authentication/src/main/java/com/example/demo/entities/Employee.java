@@ -26,6 +26,8 @@ public class Employee {
     @Column(nullable = false)  
     private Long hrId;
 
+
+    
     public Long getEid() { return eid; }
     public void setEid(Long eid) { this.eid = eid; }
 

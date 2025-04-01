@@ -3,7 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 import HRLogin from './components/hrLogin/HRLogin';
-import EmpLogin from './components/empLogin/EmpLogin';
+import EmpLogin from './components/empLogin/EMPLogin';
 import HRDashboard from './components/hrDashboard/HRDashboard';
 import EmployeeDashboard from './components/employeeDashboard/EmployeeDashboard';
 
