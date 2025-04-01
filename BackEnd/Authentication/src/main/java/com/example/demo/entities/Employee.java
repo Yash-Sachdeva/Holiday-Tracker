@@ -21,14 +21,29 @@ public class Employee {
     private String role = "EMPLOYEE";  
 
     @Column(nullable = false) 
-    private Long clientId;
+    private String clientName;
 
     @Column(nullable = false)  
     private Long hrId;
-
-
     
-    public Long getEid() { return eid; }
+    @Column(nullable = false)  
+    private String department;	
+    
+    @Column(nullable = false)  
+    private String designation; 
+    
+    @Column(nullable = false)  
+    private int age;
+    
+    
+    
+    public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	public Long getEid() { return eid; }
     public void setEid(Long eid) { this.eid = eid; }
 
     public String getEmail() { return email; }
@@ -43,9 +58,26 @@ public class Employee {
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
 
-    public Long getClientId() { return clientId; }
-    public void setClientId(Long clientId) { this.clientId = clientId; }
-
-    public Long getHrId() { return hrId; }
+    
+    
+    public String getClientName() {
+		return clientName;
+	}
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
+	}
+	public String getDepartment() {
+		return department;
+	}
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+	public String getDesignation() {
+		return designation;
+	}
+	public void setDesignation(String designation) {
+		this.designation = designation;
+	}
+	public Long getHrId() { return hrId; }
     public void setHrId(Long hrId) { this.hrId = hrId; }
 }

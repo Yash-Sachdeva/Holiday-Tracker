@@ -24,19 +24,11 @@ public class HolidayService {
 		return holidayRepository.findAll();
 	}
 	
-    public Long getHolidayId(Long clientId, LocalDate holidayDate) {
-        Optional<Holiday> holiday = holidayRepository.findByClientIdAndHolidayDate(clientId, holidayDate);
+    public Long getHolidayId(String clientName, LocalDate holidayDate) {
+        Optional<Holiday> holiday = holidayRepository.findByClientNameAndHolidayDate(clientName, holidayDate);
         return holiday.map(Holiday::getHolidayId).orElse(null);
     }
 	
-	public void deleteHoliday(Long holidayId) {
-		if (holidayRepository.existsById(holidayId)) {
-			holidayRepository.deleteById(holidayId);
-		} else {
-			throw new RuntimeException("Holiday with ID " + holidayId + " not found.");
-	    }
-
-	}
 	
 	public Holiday updateHoliday(Long holidayId, Holiday updatedHoliday) {
 	    return holidayRepository.findById(holidayId)
@@ -48,8 +40,8 @@ public class HolidayService {
 	        .orElseThrow(() -> new RuntimeException("Holiday with ID " + holidayId + " not found."));
 	}
 	
-	public Optional<Holiday> getHolidayWithClientId(long clientId){
-		return holidayRepository.findByClientId(clientId);
+	public List<Holiday> getHolidayWithClientName(String clientName){
+		return holidayRepository.findByClientName(clientName);
 	}
 
 

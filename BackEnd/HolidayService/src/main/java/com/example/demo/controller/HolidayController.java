@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,8 +36,8 @@ public class HolidayController {
 	
 	
 	@GetMapping("/holidayid")
-    public Long getHolidayId(@RequestParam Long clientId, @RequestParam LocalDate holidayDate) {
-        return holidayService.getHolidayId(clientId, holidayDate);
+    public Long getHolidayId(@RequestParam String clientName, @RequestParam LocalDate holidayDate) {
+        return holidayService.getHolidayId(clientName, holidayDate);
     }
 	
 	@PutMapping("/update/{holidayId}")
@@ -47,15 +45,10 @@ public class HolidayController {
 		return holidayService.updateHoliday(holidayId,holiday);
 	}
 	
-	@DeleteMapping("/delete/{holidayId}")
-	public String deleteHoliday(@PathVariable Long holidayId) {
-		holidayService.deleteHoliday(holidayId);
-		return "Deleted Sucessfully!";
-	}
 	
-	@GetMapping("/get/{clientId}")
-	public Optional<Holiday> getHolidayWithClientId(@PathVariable long clientId ) {
-		return holidayService.getHolidayWithClientId(clientId);
+	@GetMapping("/get/{clientName}")
+	public List<Holiday> getHolidayWithClientName(@PathVariable String clientName ) {
+		return holidayService.getHolidayWithClientName(clientName);
 	}
 	
 }

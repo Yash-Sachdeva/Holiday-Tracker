@@ -10,7 +10,7 @@ import com.example.demo.entities.Holiday;
 
 public interface HolidayRepository extends JpaRepository<Holiday,Long> {
 	void deleteByHolidayId(Long holidayId);
-	Optional<Holiday> findByClientIdAndHolidayDate(Long clientId, LocalDate holidayDate);
-	Optional<Holiday> findByClientId(Long clientId);
+	Optional<Holiday> findByClientNameAndHolidayDate(String clientName, LocalDate holidayDate);
+	List<Holiday> findByClientName(String clientName);
 
 }

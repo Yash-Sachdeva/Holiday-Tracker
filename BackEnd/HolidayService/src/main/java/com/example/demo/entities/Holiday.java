@@ -10,64 +10,62 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Holiday {
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long holidayId;
-	
-	@Column(nullable=false)	
-	private String name;
-	
-	@Column(nullable=false)
-	private Long clientId;
 
-	@Column(nullable = false)
-    private String description;   
-	
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long holidayId;
+
+    @Column(nullable = false)    
+    private String name;
+
+    @Column(nullable = false)
+    private String clientName;	
+
+    @Column(nullable = false)
+    private String description;
+
     @Column(nullable = false)
     private LocalDate holidayDate;
 
-    
-    
-	public String getName() {
-		return name;
-	}
+    // Getter and Setter methods
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Long getClientId() {
-		return clientId;	
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Long getHolidayId() {
-		return holidayId;
-	}
+    public String getClientName() {
+        return clientName;    
+    }
 
-	public void setHolidayId(Long holidayId) {
-		this.holidayId = holidayId;
-	}
+    public Long getHolidayId() {
+        return holidayId;
+    }
 
-	public void setClientId(Long clientId) {
-		this.clientId = clientId;
-	}
+    public void setHolidayId(Long holidayId) {
+        this.holidayId = holidayId;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setClientName(String clientName) {  // Fixed here
+        this.clientName = clientName;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public LocalDate getHolidayDate() {
-		return holidayDate;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setHolidayDate(LocalDate holidayDate) {
-		this.holidayDate = holidayDate;
-	} 
-    
+    public LocalDate getHolidayDate() {
+        return holidayDate;
+    }
 
+    public void setHolidayDate(LocalDate holidayDate) {
+        this.holidayDate = holidayDate;
+    } 
 }
