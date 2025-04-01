@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.demo.entities.Holiday;
 
 public interface HolidayRepository extends JpaRepository<Holiday,Long> {
-	List<Holiday> findByClientId(Long clientId);
 	void deleteByHolidayId(Long holidayId);
 	Optional<Holiday> findByClientIdAndHolidayDate(Long clientId, LocalDate holidayDate);
+	Optional<Holiday> findByClientId(Long clientId);
 
 }

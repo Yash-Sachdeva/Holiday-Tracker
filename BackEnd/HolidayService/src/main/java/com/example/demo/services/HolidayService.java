@@ -24,10 +24,6 @@ public class HolidayService {
 		return holidayRepository.findAll();
 	}
 	
-	public List<Holiday> getClientHolidays(Long clientId){
-		return holidayRepository.findByClientId(clientId);
-	}
-	
     public Long getHolidayId(Long clientId, LocalDate holidayDate) {
         Optional<Holiday> holiday = holidayRepository.findByClientIdAndHolidayDate(clientId, holidayDate);
         return holiday.map(Holiday::getHolidayId).orElse(null);
@@ -50,6 +46,10 @@ public class HolidayService {
 	            return holidayRepository.save(existingHoliday); 
 	        })
 	        .orElseThrow(() -> new RuntimeException("Holiday with ID " + holidayId + " not found."));
+	}
+	
+	public Optional<Holiday> getHolidayWithClientId(long clientId){
+		return holidayRepository.findByClientId(clientId);
 	}
 
 

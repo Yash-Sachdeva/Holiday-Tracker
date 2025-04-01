@@ -15,6 +15,9 @@ public class Holiday {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long holidayId;
 	
+	@Column(nullable=false)	
+	private String name;
+	
 	@Column(nullable=false)
 	private Long clientId;
 
@@ -24,8 +27,18 @@ public class Holiday {
     @Column(nullable = false)
     private LocalDate holidayDate;
 
+    
+    
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public Long getClientId() {
-		return clientId;
+		return clientId;	
 	}
 
 	public Long getHolidayId() {

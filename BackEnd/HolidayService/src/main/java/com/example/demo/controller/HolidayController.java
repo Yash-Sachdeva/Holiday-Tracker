@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,10 +35,6 @@ public class HolidayController {
 		return holidayService.registerHoliday(holiday);
 	}
 	
-	@GetMapping("/clientholiday/{clientId}")
-	public List<Holiday> getClientHolidays(@PathVariable Long clientId){
-		return holidayService.getClientHolidays(clientId);
-	}
 	
 	@GetMapping("/holidayid")
     public Long getHolidayId(@RequestParam Long clientId, @RequestParam LocalDate holidayDate) {
@@ -53,6 +50,11 @@ public class HolidayController {
 	public String deleteHoliday(@PathVariable Long holidayId) {
 		holidayService.deleteHoliday(holidayId);
 		return "Deleted Sucessfully!";
+	}
+	
+	@GetMapping("/get/{clientId}")
+	public Optional<Holiday> getHolidayWithClientId(@PathVariable long clientId ) {
+		return holidayService.getHolidayWithClientId(clientId);
 	}
 	
 }

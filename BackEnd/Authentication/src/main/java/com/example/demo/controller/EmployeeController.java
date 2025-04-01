@@ -102,4 +102,16 @@ public class EmployeeController {
         
         return ResponseEntity.ok(employeeService.deleteEmployee(e));
     }
+ // ✅ Get Logged-in Employee Profile
+    @GetMapping("/profile/employee")
+    public ResponseEntity<Employee> getEmployeeProfile(HttpSession session) {
+        Employee employee = (Employee) session.getAttribute("userEmployee");
+
+        if (employee == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        return ResponseEntity.ok(employee);
+    }
+
 }
