@@ -312,7 +312,7 @@
 }
 
 .weekend-tile {
-  background-color: rgba(241, 196, 15, 0.1) !important;
+  background-color: rgba(226, 210, 142, 0.1) !important;
   color: #7f8c8d !important;
 }
 
@@ -428,10 +428,10 @@
 }
 
 .no-events {
-  color: #95a5a6;
-  font-style: italic;
   text-align: center;
-  margin: 1.5rem 0;
+  color: #666;
+  padding: 20px;
+  font-style: italic;
 }
 
 /* Upcoming holidays list */
@@ -480,12 +480,12 @@
 }
 
 .error-message {
-  background-color: #fee2e2;
-  color: #dc2626;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-top: 1rem;
-  border-left: 4px solid #dc2626;
+  color: #dc3545;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
 }
 
 /* Responsive Design */
@@ -551,3 +551,4 @@
     bottom: 4px;
   }
 }
+

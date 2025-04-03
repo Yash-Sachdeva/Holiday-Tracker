@@ -32,7 +32,7 @@ public class EmployeeController {
         employeeService.registerEmployee(employee);
         return ResponseEntity.ok("Employee Registered Successfully");
     }
-
+    
     // ✅ **Employee Login**
     @PostMapping("/login/employee")
     public ResponseEntity<String> loginEmployee(@RequestBody LoginDTO loginDTO, HttpServletRequest request) {

@@ -1,9 +1,10 @@
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import Sidebar from './components/Sidebar';
 import DashboardHome from './components/DashboardHome';
 import EmployeeManagement from './components/EmployeeManagement';
-import LeaveManagement from './components/LeaveManagement';
+import HolidayManagement from './components/HolidayManagement';
 import AttendanceTracking from './components/AttendanceTracking';
 import Reports from './components/Reports';
 import MobileMenuToggle from './components/MobileMenuToggle';
@@ -13,6 +14,7 @@ const HRDashboard = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { logout } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -22,6 +24,7 @@ const HRDashboard = () => {
       });
       
       if (response.ok) {
+        await logout();
         navigate('/');
       } else {
         setError('Logout failed. Please try again.');
@@ -50,7 +53,7 @@ const HRDashboard = () => {
           <Routes>
             <Route index element={<DashboardHome />} />
             <Route path="employees" element={<EmployeeManagement />} />
-            <Route path="leaves" element={<LeaveManagement />} />
+            <Route path="holidays" element={<HolidayManagement />} />
             <Route path="attendance" element={<AttendanceTracking />} />
             <Route path="reports" element={<Reports />} />
           </Routes>
@@ -61,6 +64,9 @@ const HRDashboard = () => {
 };
 
 export default HRDashboard;
+
+
+
 
 
 

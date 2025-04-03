@@ -5,26 +5,16 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './EmployeeDashboard.css';
 
-const MOCK_HOLIDAYS = [
-  {
-    id: 1,
-    name: "New Year's Day",
-    date: "2025-04-08",
-    description: "New Year's Day Celebration"
-  }
-];
-
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const { logout, isAuthenticated, userRole, checkSession } = useAuth();
   const [error, setError] = useState('');
   const [userData, setUserData] = useState({
-    name: 'John Doe',
-    email: 'john@example.com',
-    department: 'Engineering',
-    position: 'Software Developer',
-    joinDate: '01/01/2023',
-    leaveBalance: 15,
+    name: '',
+    email: '',
+    clientName: '',
+    age:'',
+    designation:''
   });
   const [holidays, setHolidays] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -43,20 +33,18 @@ const EmployeeDashboard = () => {
     };
     
     verifyAuth();
-    fetchUserData();
-    fetchHolidays();
+    fetchUserData();  // This will trigger the userData update, which will then trigger fetchHolidays
 
     const sessionInterval = setInterval(checkSession, 5 * 60 * 1000);
     return () => clearInterval(sessionInterval);
   }, [isAuthenticated, userRole, navigate, checkSession]);
 
   useEffect(() => {
-    // Set upcoming holidays - next 3 holidays
     if (holidays.length) {
       const today = new Date();
       const upcoming = holidays
-        .filter(h => new Date(h.date) >= today)
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .filter(h => new Date(h.holidayDate) >= today)
+        .sort((a, b) => new Date(a.holidayDate) - new Date(b.holidayDate))
         .slice(0, 3);
       setUpcomingHolidays(upcoming);
     }
@@ -64,46 +52,79 @@ const EmployeeDashboard = () => {
 
   const fetchUserData = async () => {
     try {
-      // Replace with actual API call
-      const response = await fetch('http://localhost:8080/api/employee/profile', {
+      const response = await fetch(`http://localhost:8080/auth/profile/employee`, {
         credentials: 'include'
       });
+      
       if (response.ok) {
         const data = await response.json();
         setUserData(data);
+      } else {
+        throw new Error('Failed to fetch user data');
       }
     } catch (error) {
       setError('Failed to fetch user data');
     }
   };
 
+  useEffect(() => {
+    if (userData && userData.clientName) {
+      fetchHolidays();
+    }
+  }, [userData.clientName]);
+
   const fetchHolidays = async () => {
     try {
-      // Comment out the API call
-      /*
-      const response = await fetch('http://localhost:8080/api/holidays', {
+      if (!userData.clientName) {
+        console.log('Client name not available yet');
+        return;
+      }
+
+      const encodedClientName = encodeURIComponent(userData.clientName);
+
+      const response = await fetch(`http://localhost:8081/holiday/get/${encodedClientName}`, {
         credentials: 'include'
       });
+      
       if (response.ok) {
         const data = await response.json();
         setHolidays(data);
-      */
-      
-      // Use hardcoded data instead
-      setHolidays(MOCK_HOLIDAYS);
-      
-      // Create events for the calendar view
-      const eventsData = MOCK_HOLIDAYS.map(holiday => ({
-        id: holiday.id,
-        type: 'holiday',
-        title: holiday.name,
-        date: new Date(holiday.date),
-        description: holiday.description
-      }));
-      setEvents(eventsData);
-      
+        
+        const eventsData = data.map(holiday => ({
+          id: holiday.holidayId,
+          type: 'holiday',
+          title: holiday.name,
+          date: new Date(holiday.holidayDate),
+          description: holiday.description
+        }));
+        setEvents(eventsData);
+      } else {
+        throw new Error('Failed to fetch holidays');
+      }
     } catch (error) {
+      console.error('Error fetching holidays:', error); // Debug log
       setError('Failed to fetch holidays');
+      setHolidays([]);
+      setEvents([]);
+    }
+  };
+
+  const getHolidayId = async (clientId, holidayDate) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8081/holiday/holidayid?clientId=${clientId}&holidayDate=${holidayDate}`,
+        {
+          credentials: 'include'
+        }
+      );
+      
+      if (response.ok) {
+        const holidayId = await response.json();
+        return holidayId;
+      }
+    } catch (error) {
+      setError('Failed to fetch holiday ID');
+      return null;
     }
   };
 
@@ -129,14 +150,8 @@ const EmployeeDashboard = () => {
     if (view !== 'month') return null;
     
     const dateString = date.toDateString();
-    
-    // Check if date is today
     const isToday = new Date().toDateString() === dateString;
-    
-    // Check if date is a holiday
-    const holiday = holidays.find(h => new Date(h.date).toDateString() === dateString);
-    
-    // Check if date is weekend
+    const holiday = holidays.find(h => new Date(h.holidayDate).toDateString() === dateString);
     const isWeekend = date.getDay() === 0 || date.getDay() === 6;
     
     if (holiday) return 'holiday-tile';
@@ -165,13 +180,11 @@ const EmployeeDashboard = () => {
   };
 
   const handleDateClick = (date) => {
-    const holiday = holidays.find(h => new Date(h.date).toDateString() === date.toDateString());
+    const holiday = holidays.find(h => 
+      new Date(h.holidayDate).toDateString() === date.toDateString()
+    );
     setSelectedDate(date);
     setHolidayDetails(holiday);
-  };
-
-  const formatMonthYear = (locale, date) => {
-    return date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
   };
 
   if (!isAuthenticated || userRole !== 'EMPLOYEE') {
@@ -184,7 +197,7 @@ const EmployeeDashboard = () => {
       <aside className="sidebar">
         <div className="user-profile">
           <div className="profile-image">
-            <img src={userData.profileImage || '/default-avatar.png'} alt="Profile" />
+            <img src="/dp.jpeg" alt="Profile" />
           </div>
           <h2>{userData.name}</h2>
           <p className="user-title">{userData.position}</p>
@@ -192,20 +205,20 @@ const EmployeeDashboard = () => {
 
         <div className="user-info-section">
           <div className="info-item">
-            <label>Department</label>
-            <span>{userData.department}</span>
-          </div>
-          <div className="info-item">
             <label>Email</label>
             <span>{userData.email}</span>
           </div>
           <div className="info-item">
-            <label>Join Date</label>
-            <span>{userData.joinDate}</span>
+            <label>Name</label>
+            <span>{userData.name}</span>
           </div>
-          <div className="info-item highlight">
-            <label>Leave Balance</label>
-            <span>{userData.leaveBalance} days</span>
+          <div className="info-item">
+            <label>Client Name</label>
+            <span>{userData.clientName}</span>
+          </div>
+          <div className="info-item">
+            <label>Designation</label>
+            <span>{userData.designation}</span>
           </div>
         </div>
 
@@ -217,7 +230,7 @@ const EmployeeDashboard = () => {
       {/* Main Content */}
       <main className="main-content">
         <div className="dashboard-header">
-          <h1>Employee Dashboard</h1>
+          <h1>Dashboard</h1>
           <p className="welcome-message">Welcome back, {userData.name}!</p>
         </div>
 
@@ -238,7 +251,9 @@ const EmployeeDashboard = () => {
                 value={selectedDate}
                 tileClassName={tileClassName}
                 tileContent={tileContent}
-                formatMonthYear={formatMonthYear}
+                formatMonthYear={(locale, date) => 
+                  date.toLocaleDateString(locale, { month: 'long', year: 'numeric' })
+                }
                 nextLabel={<span className="calendar-nav">›</span>}
                 prevLabel={<span className="calendar-nav">‹</span>}
                 next2Label={<span className="calendar-nav">»</span>}
@@ -277,18 +292,21 @@ const EmployeeDashboard = () => {
               <h3>Upcoming Holidays</h3>
               {upcomingHolidays.length > 0 ? (
                 <ul className="upcoming-list">
-                  {upcomingHolidays.map((holiday, index) => (
-                    <li key={index} className="upcoming-item">
+                  {upcomingHolidays.map((holiday) => (
+                    <li key={holiday.holidayId} className="upcoming-item">
                       <div className="upcoming-date">
-                        {new Date(holiday.date).toLocaleDateString('en-US', { 
+                        {new Date(holiday.holidayDate).toLocaleDateString('en-US', { 
                           day: 'numeric',
                           month: 'short'
                         })}
                       </div>
                       <div className="upcoming-details">
                         <strong>{holiday.name}</strong>
+                        <span>{holiday.description}</span>
                         <span>
-                          {new Date(holiday.date).toLocaleDateString('en-US', { weekday: 'long' })}
+                          {new Date(holiday.holidayDate).toLocaleDateString('en-US', { 
+                            weekday: 'long' 
+                          })}
                         </span>
                       </div>
                     </li>
@@ -308,4 +326,10 @@ const EmployeeDashboard = () => {
 };
 
 export default EmployeeDashboard;
+
+
+
+
+
+
 
