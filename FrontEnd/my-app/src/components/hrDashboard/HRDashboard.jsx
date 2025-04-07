@@ -5,8 +5,6 @@ import Sidebar from './components/Sidebar';
 import DashboardHome from './components/DashboardHome';
 import EmployeeManagement from './components/EmployeeManagement';
 import HolidayManagement from './components/HolidayManagement';
-import AttendanceTracking from './components/AttendanceTracking';
-import Reports from './components/Reports';
 import MobileMenuToggle from './components/MobileMenuToggle';
 import './styles/HRDashboard.css';
 
@@ -54,8 +52,6 @@ const HRDashboard = () => {
             <Route index element={<DashboardHome />} />
             <Route path="employees" element={<EmployeeManagement />} />
             <Route path="holidays" element={<HolidayManagement />} />
-            <Route path="attendance" element={<AttendanceTracking />} />
-            <Route path="reports" element={<Reports />} />
           </Routes>
         </main>
       </div>

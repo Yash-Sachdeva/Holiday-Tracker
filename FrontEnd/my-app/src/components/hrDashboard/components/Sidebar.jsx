@@ -8,9 +8,7 @@ const Sidebar = () => {
   const menuItems = [
     { path: '/hr-dashboard', icon: '🏠', name: 'Dashboard', exact: true },
     { path: '/hr-dashboard/employees', icon: '👥', name: 'Employees' },
-    { path: '/hr-dashboard/holidays', icon: '🎉', name: 'Holidays' },
-    { path: '/hr-dashboard/attendance', icon: '⏰', name: 'Attendance' },
-    { path: '/hr-dashboard/reports', icon: '📊', name: 'Reports' }
+    { path: '/hr-dashboard/holidays', icon: '🎉', name: 'Holidays' }
   ];
 
   return (

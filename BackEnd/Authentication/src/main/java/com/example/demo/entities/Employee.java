@@ -35,8 +35,6 @@ public class Employee {
     @Column(nullable = false)  
     private int age;
     
-    
-    
     public int getAge() {
 		return age;
 	}

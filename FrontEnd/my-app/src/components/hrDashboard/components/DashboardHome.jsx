@@ -38,10 +38,8 @@ const DashboardHome = () => {
       setStats({
         totalEmployees: employeesData.length
       });
-
-    } catch (err) {
+    } catch (error) {
       setError('Failed to fetch dashboard data');
-      console.error('Dashboard data fetch error:', err);
     } finally {
       setLoading(false);
     }
