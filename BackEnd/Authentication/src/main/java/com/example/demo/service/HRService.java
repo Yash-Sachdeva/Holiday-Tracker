@@ -26,6 +26,15 @@ public class HRService {
         }
         return null;
     }
+
+    public String deleteHR(HR e) {
+    	if(hrRepository.findByEmail(e.getEmail())==null)
+    		return "HR Not Found";
+    	else {
+    		hrRepository.delete(e);
+    		return "HR Deleted Successfully";
+    	}    		
+    }
     
     public HR getHRByEmail(String email) {
     	return hrRepository.findByEmail(email);
@@ -35,4 +44,7 @@ public class HRService {
     	return hrRepository.findAll();
     }
     
+    public HR getHrById(Long id) {
+        return hrRepository.findById(id).orElse(null);
+    }
 }

@@ -70,4 +70,11 @@ public class EmployeeService {
     		return "Employee Deleted Successfully";
     	}    		
     }
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
+    }
+    
+    public Employee getEmployeeById(Long id) {
+        return employeeRepository.findById(id).orElse(null);
+    }
 }

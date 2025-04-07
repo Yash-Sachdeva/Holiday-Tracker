@@ -20,5 +20,16 @@ public class ClientService {
     {
     	return clientRepository.findAll();
     }
+    public Client getClientById(Long id) {
+        return clientRepository.findById(id).orElse(null);
+    }
+    public String deleteClient(Client e) {
+    	if(clientRepository.findById(e.getClientId())==null)
+    		return "Client Not Found";
+    	else {
+    		clientRepository.delete(e);
+    		return "Client Deleted Successfully";
+    	}    		
+    }
 }
 
