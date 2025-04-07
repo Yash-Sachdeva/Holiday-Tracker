@@ -21,7 +21,7 @@ public class HR {
     private String role = "HR"; 
     
     @Column(nullable = false)
-    private Long superHrId;
+    private Long adminId;
 
 	public Long getHrId() {
 		return hrId;
@@ -63,12 +63,12 @@ public class HR {
 		this.role = role;
 	}
 
-	public Long getSuperHrId() {
-		return superHrId;
+	public Long getAdminId() {
+		return adminId;
 	}
 
-	public void setSuperHrId(Long superHrId) {
-		this.superHrId = superHrId;
+	public void setAdminId(Long adminId) {
+		this.adminId = adminId;
 	}
 
 	

@@ -6,6 +6,7 @@ import HRLogin from './components/hrLogin/HRLogin';
 import EmpLogin from './components/empLogin/EMPLogin';
 import HRDashboard from './components/hrDashboard/HRDashboard';
 import EmployeeDashboard from './components/employeeDashboard/EmployeeDashboard';
+import AdminDashboard from './components/adminDashboard/AdminDashboard';
 
 // Create HomePage as a separate component
 const HomePage = () => {
@@ -106,6 +107,14 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/admin-dashboard/*" 
+            element={
+              <ProtectedRoute requiredRole="ADMIN">
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
         </Routes>
       </Router>
     </AuthProvider>
@@ -113,12 +122,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
-
-
-
-

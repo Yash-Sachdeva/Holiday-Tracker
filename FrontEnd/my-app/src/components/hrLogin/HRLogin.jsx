@@ -12,9 +12,13 @@ const HRLogin = () => {
   const navigate = useNavigate();
   const { login, isAuthenticated, userRole } = useAuth();
 
-  // Redirect if already authenticated as HR
-  if (isAuthenticated && userRole === 'HR') {
-    return <Navigate to="/hr-dashboard" />;
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    if (userRole === 'HR') {
+      return <Navigate to="/hr-dashboard" />;
+    } else if (userRole === 'ADMIN') {
+      return <Navigate to="/admin-dashboard" />;
+    }
   }
 
   const handleChange = (e) => {
@@ -30,7 +34,8 @@ const HRLogin = () => {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:8080/auth/login/hr', {
+      // First try HR login
+      const hrResponse = await fetch('http://localhost:8080/auth/login/hr', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,16 +44,37 @@ const HRLogin = () => {
         credentials: 'include'
       });
 
-      const data = await response.text();
+      const hrData = await hrResponse.text();
 
-      if (response.ok && data === "Login successful!") {
+      if (hrResponse.ok && hrData === "Login successful!") {
         login('HR');
         navigate('/hr-dashboard');
-      } else {
-        setError('Invalid credentials. Please try again.');
+        return;
       }
+
+      // If HR login fails, try Admin login
+      const adminResponse = await fetch('http://localhost:8080/auth/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+        credentials: 'include'
+      });
+
+      const adminData = await adminResponse.text();
+
+      if (adminResponse.ok && adminData === "Admin login successful!") {
+        login('ADMIN');
+        navigate('/admin-dashboard');
+        return;
+      }
+
+      // If both logins fail, show error
+      setError('Invalid credentials. Please try again.');
     } catch (err) {
       setError('Network error. Please try again later.');
+      console.error('Login error:', err);
     }
   };
 
@@ -58,7 +84,7 @@ const HRLogin = () => {
         <button onClick={() => navigate('/')} className="back-button">
           ← Back to Home
         </button>
-        <h2>HR Login</h2>
+        <h2>Login</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">

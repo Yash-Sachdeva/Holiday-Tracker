@@ -15,20 +15,20 @@ export const AuthProvider = ({ children }) => {
 
   const checkSession = async () => {
     try {
-      // First try employee session
-      const employeeResponse = await fetch('http://localhost:8080/auth/session/employee', {
+      // Try admin session
+      const adminResponse = await fetch('http://localhost:8080/auth/admin/session', {
         credentials: 'include'
       });
-      const employeeData = await employeeResponse.text();
+      const adminData = await adminResponse.text();
       
-      if (employeeData.includes('User is logged in')) {
+      if (adminData.includes('User is logged in')) {
         setIsAuthenticated(true);
-        setUserRole('EMPLOYEE');
+        setUserRole('ADMIN');
         setIsLoading(false);
         return;
       }
 
-      // If not employee, try HR session
+      // Try HR session
       const hrResponse = await fetch('http://localhost:8080/auth/session/hr', {
         credentials: 'include'
       });
@@ -41,7 +41,20 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      // If neither, user is not authenticated
+      // Try employee session
+      const employeeResponse = await fetch('http://localhost:8080/auth/session/employee', {
+        credentials: 'include'
+      });
+      const employeeData = await employeeResponse.text();
+      
+      if (employeeData.includes('User is logged in')) {
+        setIsAuthenticated(true);
+        setUserRole('EMPLOYEE');
+        setIsLoading(false);
+        return;
+      }
+
+      // If no session is found
       setIsAuthenticated(false);
       setUserRole(null);
     } catch (error) {
@@ -60,9 +73,20 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      const endpoint = userRole === 'HR' 
-        ? 'http://localhost:8080/auth/logout/hr'
-        : 'http://localhost:8080/auth/logout/employee';
+      let endpoint;
+      switch (userRole) {
+        case 'HR':
+          endpoint = 'http://localhost:8080/auth/logout/hr';
+          break;
+        case 'ADMIN':
+          endpoint = 'http://localhost:8080/auth/admin/logout';
+          break;
+        case 'EMPLOYEE':
+          endpoint = 'http://localhost:8080/auth/logout/employee';
+          break;
+        default:
+          endpoint = 'http://localhost:8080/auth/logout';
+      }
 
       await fetch(endpoint, {
         credentials: 'include'
