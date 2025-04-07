@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entities.Admin;
 import com.example.demo.entities.Client;
+import com.example.demo.entities.Employee;
 import com.example.demo.entities.HR;
 import com.example.demo.dto.LoginDTO;
 import com.example.demo.service.AdminService;
 import com.example.demo.service.ClientService;
+import com.example.demo.service.EmployeeService;
 import com.example.demo.service.HRService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +21,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/auth/admin")
 public class AdminController {
+	
+	@Autowired
+	private EmployeeService employeeService;
     
     @Autowired
     private AdminService adminService;
@@ -72,6 +77,35 @@ public class AdminController {
         List<HR> allHRs = hrService.getAllHR();
         int totalHRs = allHRs.size();
         return ResponseEntity.ok(totalHRs);
+    }
+    
+    @GetMapping("/dashboard/total-clients")
+    public ResponseEntity<?> getTotalClients(HttpSession session) {
+        Admin admin = (Admin) session.getAttribute("userAdmin");
+        if (admin == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authorized as admin");
+        }
+        
+        List<Client> allClients = clientService.getClients();
+        int totalClients = allClients.size();
+        return ResponseEntity.ok(totalClients);
+    }
+    
+    @GetMapping("/dashboard/total-employees")
+    public ResponseEntity<?> getTotalEmployees(HttpSession session) {
+        Admin admin = (Admin) session.getAttribute("userAdmin");
+        if (admin == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authorized as admin");
+        }
+        
+        try {
+            List<Employee> allEmployees = employeeService.getAllEmployees();
+            int totalEmployees = allEmployees.size();
+            return ResponseEntity.ok(totalEmployees);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving employees: " + e.getMessage());
+        }
     }
     
     // HR Management APIs
