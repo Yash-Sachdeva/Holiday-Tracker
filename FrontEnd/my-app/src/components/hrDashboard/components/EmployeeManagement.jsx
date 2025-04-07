@@ -4,6 +4,7 @@ import '../styles/EmployeeManagement.css';
 const EmployeeManagement = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [clients, setClients] = useState([]);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     employeeName: '',
@@ -19,8 +20,25 @@ const EmployeeManagement = () => {
   const [editingEmployee, setEditingEmployee] = useState(null);
 
   useEffect(() => {
-    fetchEmployees();
+    const initializeData = async () => {
+      await Promise.all([fetchEmployees(), fetchClients()]);
+      setLoading(false);
+    };
+    initializeData();
   }, []);
+
+  const fetchClients = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/auth/client/all', {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to fetch clients');
+      const data = await response.json();
+      setClients(data);
+    } catch (err) {
+      setError('Failed to fetch clients: ' + err.message);
+    }
+  };
 
   const fetchEmployees = async () => {
     try {
@@ -228,14 +246,20 @@ const EmployeeManagement = () => {
               </div>
               <div className="form-group">
                 <label htmlFor="clientName">Client Name</label>
-                <input
-                  type="text"
+                <select
                   id="clientName"
                   name="clientName"
                   value={formData.clientName}
                   onChange={handleInputChange}
                   required
-                />
+                >
+                  <option value="">Select a client</option>
+                  {clients.map(client => (
+                    <option key={client.clientId} value={client.name}>
+                      {client.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="form-group">
                 <label htmlFor="department">Department</label>

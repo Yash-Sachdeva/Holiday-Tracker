@@ -207,7 +207,7 @@ const HolidayManagement = () => {
                 onClick={handleBack}
               >
                 <IoArrowBack className="back-icon" />
-                Back to Clients
+                <span>Back to Clients</span>
               </button>
               <div className="current-page-title">
                 <h3>{selectedClient.name}</h3>
