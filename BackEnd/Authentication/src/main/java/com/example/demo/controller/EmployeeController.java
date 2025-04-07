@@ -72,12 +72,16 @@ public class EmployeeController {
     @PutMapping("/update/employee")
     public ResponseEntity<String> updateEmployee(HttpSession session, @RequestBody Employee e) {
         HR hr = (HR)session.getAttribute("userHR");
-    	if (hr==null || !"HR".equalsIgnoreCase(hr.getRole())) {
+        if (hr==null || !"HR".equalsIgnoreCase(hr.getRole())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have authorization to update an employee");
         }
 
-        employeeService.registerEmployee(e);
-        return ResponseEntity.ok("Employee Updated Successfully");
+        try {
+            employeeService.updateEmployee(e);
+            return ResponseEntity.ok("Employee Updated Successfully");
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
 
     // ✅ **Get All Employees**

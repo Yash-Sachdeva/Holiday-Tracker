@@ -81,7 +81,8 @@ const EmployeeManagement = () => {
         clientName: formData.clientName,
         department: formData.department,
         designation: formData.designation,
-        role: formData.role
+        role: formData.role,
+        hrId: editingEmployee ? editingEmployee.hrId : null  // Include hrId for updates
       };
 
       const response = await fetch(url, {
@@ -153,7 +154,7 @@ const EmployeeManagement = () => {
   const handleEdit = (employee) => {
     setEditingEmployee(employee);
     setFormData({
-      employeeName: employee.name, // Changed from employeeName to name
+      employeeName: employee.name,
       email: employee.email,
       role: employee.role,
       clientName: employee.clientName,
