@@ -25,6 +25,26 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
+    public Employee updateEmployee(Employee employee) {
+        // Find existing employee by ID
+        Employee existingEmployee = employeeRepository.findById(employee.getEid())
+            .orElseThrow(() -> new RuntimeException("Employee not found"));
+        
+        // Check if email is being changed and if new email already exists
+        if (!existingEmployee.getEmail().equals(employee.getEmail().toLowerCase())) {
+            Employee emailCheck = employeeRepository.findByEmail(employee.getEmail().toLowerCase());
+            if (emailCheck != null) {
+                throw new RuntimeException("Employee with email " + employee.getEmail() + " already exists");
+            }
+        }
+        
+        // Preserve the hrId from the existing employee
+        employee.setHrId(existingEmployee.getHrId());
+        employee.setEmail(employee.getEmail().toLowerCase());
+        
+        return employeeRepository.save(employee);
+    }
+
     public Employee authenticate(String email, String password) {
         Employee employee = employeeRepository.findByEmail(email);
         if (employee != null && employee.getPassword().equals(password)) {
