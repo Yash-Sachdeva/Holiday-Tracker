@@ -3,51 +3,63 @@ import '../styles/DashboardHome.css';
 
 const DashboardHome = () => {
   const [stats, setStats] = useState({
-    totalEmployees: 156,
-    activeLeaves: 8,
-    pendingRequests: 5,
-    attendanceToday: 145
+    totalEmployees: 0
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [hrName, setHrName] = useState('HR Manager'); // Default value
 
-  const [recentActivities] = useState([
-    {
-      id: 1,
-      type: 'leave',
-      employee: 'John Smith',
-      action: 'Leave Request',
-      status: 'Pending',
-      time: '2 hours ago'
-    },
-    {
-      id: 2,
-      type: 'attendance',
-      employee: 'Sarah Johnson',
-      action: 'Clock In',
-      status: 'Completed',
-      time: '3 hours ago'
-    },
-    {
-      id: 3,
-      type: 'profile',
-      employee: 'Mike Wilson',
-      action: 'Profile Update',
-      status: 'Completed',
-      time: '5 hours ago'
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch employees under the logged-in HR
+      const employeesResponse = await fetch('http://localhost:8080/auth/all/employee', {
+        credentials: 'include'
+      });
+      if (!employeesResponse.ok) throw new Error('Failed to fetch employees');
+      const employeesData = await employeesResponse.json();
+
+      // Get HR session info
+      const sessionResponse = await fetch('http://localhost:8080/auth/session', {
+        credentials: 'include'
+      });
+      if (sessionResponse.ok) {
+        const sessionData = await sessionResponse.text();
+        if (sessionData) {
+          setHrName(sessionData);
+        }
+      }
+
+      setStats({
+        totalEmployees: employeesData.length
+      });
+
+    } catch (err) {
+      setError('Failed to fetch dashboard data');
+      console.error('Dashboard data fetch error:', err);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
-  const [departmentStats] = useState([
-    { name: 'Engineering', employees: 45, attendance: 92, leaves: 3 },
-    { name: 'Marketing', employees: 28, attendance: 88, leaves: 2 },
-    { name: 'Sales', employees: 35, attendance: 95, leaves: 1 },
-    { name: 'HR', employees: 12, attendance: 100, leaves: 0 }
-  ]);
+  if (loading) {
+    return <div className="loading">Loading dashboard data...</div>;
+  }
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
 
   return (
     <div className="dashboard-home">
       <div className="welcome-banner">
         <div className="welcome-text">
-          <h2>Welcome back, HR Manager</h2>
+          <h2>Welcome back, {hrName}</h2>
           <p>{new Date().toLocaleDateString('en-US', { 
             weekday: 'long', 
             year: 'numeric', 
@@ -65,80 +77,50 @@ const DashboardHome = () => {
             <p className="stat-number">{stats.totalEmployees}</p>
           </div>
         </div>
-
-        <div className="analytics-card">
-          <div className="card-icon leaves">📅</div>
-          <div className="card-content">
-            <h3>Active Leaves</h3>
-            <p className="stat-number">{stats.activeLeaves}</p>
-          </div>
-        </div>
-
-        <div className="analytics-card">
-          <div className="card-icon requests">📋</div>
-          <div className="card-content">
-            <h3>Pending Requests</h3>
-            <p className="stat-number">{stats.pendingRequests}</p>
-          </div>
-        </div>
-
-        <div className="analytics-card">
-          <div className="card-icon attendance">⏰</div>
-          <div className="card-content">
-            <h3>Today's Attendance</h3>
-            <p className="stat-number">{stats.attendanceToday}</p>
-          </div>
-        </div>
       </div>
 
+      {/* You can remove or modify these sections as needed */}
       <div className="dashboard-sections">
         <div className="section recent-activities">
-          <h3>Recent Activities</h3>
+          <h3>Quick Actions</h3>
           <div className="activities-list">
-            {recentActivities.map(activity => (
-              <div key={activity.id} className="activity-item">
-                <div className="activity-icon">
-                  {activity.type === 'leave' ? '📅' : 
-                   activity.type === 'attendance' ? '⏰' : '👤'}
-                </div>
-                <div className="activity-details">
-                  <p className="activity-title">
-                    <strong>{activity.employee}</strong> - {activity.action}
-                  </p>
-                  <p className="activity-meta">
-                    <span className={`status ${activity.status.toLowerCase()}`}>
-                      {activity.status}
-                    </span>
-                    <span className="time">{activity.time}</span>
-                  </p>
-                </div>
+            <div className="activity-item">
+              <div className="activity-icon">👤</div>
+              <div className="activity-details">
+                <p className="activity-title">
+                  <strong>Add New Employee</strong>
+                </p>
+                <p className="activity-meta">
+                  Register a new employee in the system
+                </p>
               </div>
-            ))}
+            </div>
+            <div className="activity-item">
+              <div className="activity-icon">📋</div>
+              <div className="activity-details">
+                <p className="activity-title">
+                  <strong>View All Employees</strong>
+                </p>
+                <p className="activity-meta">
+                  See complete employee list
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="section department-stats">
-          <h3>Department Overview</h3>
+          <h3>System Overview</h3>
           <div className="department-grid">
-            {departmentStats.map((dept, index) => (
-              <div key={index} className="department-card">
-                <h4>{dept.name}</h4>
-                <div className="dept-stats">
-                  <div className="dept-stat">
-                    <span className="label">Employees</span>
-                    <span className="value">{dept.employees}</span>
-                  </div>
-                  <div className="dept-stat">
-                    <span className="label">Attendance</span>
-                    <span className="value">{dept.attendance}%</span>
-                  </div>
-                  <div className="dept-stat">
-                    <span className="label">On Leave</span>
-                    <span className="value">{dept.leaves}</span>
-                  </div>
+            <div className="department-card">
+              <h4>Employee Management</h4>
+              <div className="dept-stats">
+                <div className="dept-stat">
+                  <span className="label">Total Employees</span>
+                  <span className="value">{stats.totalEmployees}</span>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
@@ -147,3 +129,8 @@ const DashboardHome = () => {
 };
 
 export default DashboardHome;
+
+
+
+
+

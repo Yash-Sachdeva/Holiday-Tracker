@@ -54,19 +54,17 @@ const EmployeeManagement = () => {
       
       const method = editingEmployee ? 'PUT' : 'POST';
       
-      // Transform the data to match backend expectations
-      const employeeData = editingEmployee
-        ? { ...formData, eid: editingEmployee.eid }
-        : {
-            name: formData.employeeName,
-            email: formData.email,
-            password: formData.password,
-            age: parseInt(formData.age),
-            clientName: formData.clientName,
-            department: formData.department,
-            designation: formData.designation,
-            role: formData.role
-          };
+      const employeeData = {
+        eid: editingEmployee ? editingEmployee.eid : null,
+        name: formData.employeeName,
+        email: formData.email,
+        password: formData.password,
+        age: parseInt(formData.age),
+        clientName: formData.clientName,
+        department: formData.department,
+        designation: formData.designation,
+        role: formData.role
+      };
 
       const response = await fetch(url, {
         method: method,
@@ -79,6 +77,13 @@ const EmployeeManagement = () => {
 
       if (!response.ok) {
         const errorText = await response.text();
+        
+        // Check if error is about existing employee
+        if (errorText.includes("already exists")) {
+          alert("An employee with this email already exists. Please use a different email address.");
+          return;
+        }
+        
         throw new Error(errorText || `Failed to ${editingEmployee ? 'update' : 'add'} employee`);
       }
 
@@ -100,7 +105,10 @@ const EmployeeManagement = () => {
       });
     } catch (err) {
       setError(err.message);
-      alert(err.message);
+      // Only show alert for non-duplicate email errors
+      if (!err.message.includes("already exists")) {
+        alert(err.message);
+      }
     }
   };
 
@@ -295,6 +303,8 @@ const EmployeeManagement = () => {
 };
 
 export default EmployeeManagement;
+
+
 
 
 

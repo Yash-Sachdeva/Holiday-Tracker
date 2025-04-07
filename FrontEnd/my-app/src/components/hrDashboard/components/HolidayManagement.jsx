@@ -1,55 +1,7 @@
 import { useState, useEffect } from 'react';
-import './HolidayManagement.css';
+import '../styles/HolidayManagement.css';
 import { IoArrowBack } from 'react-icons/io5';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-
-// Move HolidayForm outside the main component
-const HolidayForm = ({ holidayForm, onInputChange, onSubmit, onCancel, isEditing }) => (
-  <div className="holiday-form-overlay">
-    <div className="holiday-form">
-      <h3>{isEditing ? 'Edit Holiday' : 'Add New Holiday'}</h3>
-      <form onSubmit={onSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Holiday Name</label>
-          <input
-            type="text"
-            id="name"
-            value={holidayForm.name}
-            onChange={onInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="holidayDate">Date</label>
-          <input
-            type="date"
-            id="holidayDate"
-            value={holidayForm.holidayDate}
-            onChange={onInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            value={holidayForm.description}
-            onChange={onInputChange}
-            required
-          />
-        </div>
-        <div className="form-actions">
-          <button type="button" onClick={onCancel} className="cancel-btn">
-            Cancel
-          </button>
-          <button type="submit" className="submit-btn">
-            {isEditing ? 'Update Holiday' : 'Add Holiday'}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-);
 
 const HolidayManagement = () => {
   const [clients, setClients] = useState([]);
@@ -194,6 +146,53 @@ const HolidayManagement = () => {
     }
   };
 
+  const HolidayForm = () => (
+    <div className="holiday-form-overlay">
+      <div className="holiday-form">
+        <h3>{editingHoliday ? 'Edit Holiday' : 'Add New Holiday'}</h3>
+        <form onSubmit={handleFormSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Holiday Name</label>
+            <input
+              type="text"
+              id="name"
+              value={holidayForm.name}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="holidayDate">Date</label>
+            <input
+              type="date"
+              id="holidayDate"
+              value={holidayForm.holidayDate}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              value={holidayForm.description}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-actions">
+            <button type="button" onClick={() => setShowHolidayForm(false)} className="cancel-btn">
+              Cancel
+            </button>
+            <button type="submit" className="submit-btn">
+              {editingHoliday ? 'Update Holiday' : 'Add Holiday'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+
   if (loading) return <div className="loading">Loading...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -285,21 +284,12 @@ const HolidayManagement = () => {
           </>
         )}
       </div>
-      {showHolidayForm && (
-        <HolidayForm
-          holidayForm={holidayForm}
-          onInputChange={handleInputChange}
-          onSubmit={handleFormSubmit}
-          onCancel={() => setShowHolidayForm(false)}
-          isEditing={!!editingHoliday}
-        />
-      )}
+      {showHolidayForm && <HolidayForm />}
     </div>
   );
 };
 
 export default HolidayManagement;
-
 
 
 

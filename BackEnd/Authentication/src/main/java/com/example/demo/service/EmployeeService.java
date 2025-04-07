@@ -15,8 +15,14 @@ public class EmployeeService {
     private EmployeeRepository employeeRepository;
 
     public Employee registerEmployee(Employee employee) {
+        // Check if employee with same email already exists
+        Employee existingEmployee = employeeRepository.findByEmail(employee.getEmail().toLowerCase());
+        if (existingEmployee != null) {
+            throw new RuntimeException("Employee with email " + employee.getEmail() + " already exists");
+        }
+        
         employee.setEmail(employee.getEmail().toLowerCase());
-    	return employeeRepository.save(employee);
+        return employeeRepository.save(employee);
     }
 
     public Employee authenticate(String email, String password) {
