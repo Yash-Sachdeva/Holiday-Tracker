@@ -31,16 +31,17 @@ public class EmployeeService {
             .orElseThrow(() -> new RuntimeException("Employee not found"));
         
         // Check if email is being changed and if new email already exists
-        if (!existingEmployee.getEmail().equals(employee.getEmail().toLowerCase())) {
-            Employee emailCheck = employeeRepository.findByEmail(employee.getEmail().toLowerCase());
-            if (emailCheck != null) {
+        String newEmail = employee.getEmail().toLowerCase();
+        if (!existingEmployee.getEmail().equals(newEmail)) {
+            Employee emailCheck = employeeRepository.findByEmail(newEmail);
+            if (emailCheck != null && !emailCheck.getEid().equals(employee.getEid())) {
                 throw new RuntimeException("Employee with email " + employee.getEmail() + " already exists");
             }
         }
         
         // Preserve the hrId from the existing employee
         employee.setHrId(existingEmployee.getHrId());
-        employee.setEmail(employee.getEmail().toLowerCase());
+        employee.setEmail(newEmail);
         
         return employeeRepository.save(employee);
     }

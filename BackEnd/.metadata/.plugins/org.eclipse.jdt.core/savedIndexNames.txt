@@ -17,7 +17,6 @@ INDEX VERSION 1.134+C:\Users\Wissen\Desktop\Holiday-Tracker\BackEnd\.metadata\.p
 2310794780.index
 1114703163.index
 2855051477.index
-4275341011.index
 1031323826.index
 296815888.index
 3332642068.index
