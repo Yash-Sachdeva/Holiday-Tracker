@@ -62,7 +62,7 @@ const HRDashboard = () => {
             </div>
           )}
           <Routes>
-            <Route index element={<DashboardHome />} />
+            <Route path="/" element={<DashboardHome />} />
             <Route path="employees" element={<EmployeeManagement />} />
             <Route path="holidays" element={<HolidayManagement />} />
           </Routes>

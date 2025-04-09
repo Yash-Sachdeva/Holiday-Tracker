@@ -36,20 +36,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="admin-dashboard-container">
-      <nav className="dashboard-nav">
-        <div className="nav-content">
-          <MobileMenuToggle 
-            isOpen={isMobileMenuOpen} 
-            onToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
-          />
-          <h1>Admin Dashboard</h1>
-          <button onClick={handleLogout} className="logout-btn">
-            Logout
-          </button>
-        </div>
-      </nav>
-
+    <div className="dashboard-container">
       <div className="dashboard-content">
         <Sidebar 
           isOpen={isMobileMenuOpen} 

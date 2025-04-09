@@ -130,11 +130,15 @@
 
 .edit-btn,
 .delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   padding: 8px 16px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  font-size: 14px;
 }
 
 .edit-btn {
@@ -144,6 +148,7 @@
 
 .edit-btn:hover {
   background-color: #f39c12;
+  transform: translateY(-1px);
 }
 
 .delete-btn {
@@ -153,6 +158,13 @@
 
 .delete-btn:hover {
   background-color: #c0392b;
+  transform: translateY(-1px);
+}
+
+/* Add styles for the icons */
+.edit-btn svg,
+.delete-btn svg {
+  font-size: 16px;
 }
 
 .loading {

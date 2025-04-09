@@ -82,9 +82,9 @@ const HRLogin = () => {
     <div className="login-container">
       <div className="login-box">
         <button onClick={() => navigate('/')} className="back-button">
-          ← Back to Home
+          ←
         </button>
-        <h2>Login</h2>
+        <h2>HR Login</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">

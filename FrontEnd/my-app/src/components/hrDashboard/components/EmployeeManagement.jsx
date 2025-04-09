@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../styles/EmployeeManagement.css';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const EmployeeManagement = () => {
   const [employees, setEmployees] = useState([]);
@@ -316,8 +317,18 @@ const EmployeeManagement = () => {
                 <p className="department">Department: {employee.department}</p>
               </div>
               <div className="card-actions">
-                <button className="edit-btn" onClick={() => handleEdit(employee)}>Edit</button>
-                <button className="delete-btn" onClick={() => handleDelete(employee.eid)}>Delete</button> {/* Changed from employeeId to eid */}
+                <button 
+                  className="edit-btn"
+                  onClick={() => handleEdit(employee)}
+                >
+                  <FaEdit /> Edit
+                </button>
+                <button 
+                  className="delete-btn"
+                  onClick={() => handleDelete(employee.eid)}
+                >
+                  <FaTrash /> Delete
+                </button>
               </div>
             </div>
           ))}
