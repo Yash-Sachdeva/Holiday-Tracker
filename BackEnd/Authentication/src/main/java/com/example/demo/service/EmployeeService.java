@@ -3,6 +3,7 @@ package com.example.demo.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entities.Employee;
@@ -13,6 +14,9 @@ public class EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Employee registerEmployee(Employee employee) {
         // Check if employee with same email already exists
@@ -22,6 +26,7 @@ public class EmployeeService {
         }
         
         employee.setEmail(employee.getEmail().toLowerCase());
+        employee.setPassword(passwordEncoder.encode((employee.getPassword())));
         return employeeRepository.save(employee);
     }
 
@@ -48,8 +53,8 @@ public class EmployeeService {
 
     public Employee authenticate(String email, String password) {
         Employee employee = employeeRepository.findByEmail(email);
-        if (employee != null && employee.getPassword().equals(password)) {
-            return employee;
+        if (employee != null && passwordEncoder.matches(password, employee.getPassword())) {
+             return employee;
         }
         return null;
     }
