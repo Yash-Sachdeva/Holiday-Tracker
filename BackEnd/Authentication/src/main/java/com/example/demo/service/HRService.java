@@ -4,6 +4,7 @@ package com.example.demo.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entities.HR;
@@ -14,14 +15,18 @@ public class HRService {
 
     @Autowired
     private HRRepository hrRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public HR registerHR(HR hr) {
     	hr.setEmail(hr.getEmail().toLowerCase());
+    	hr.setPassword(passwordEncoder.encode(hr.getPassword()));
         return hrRepository.save(hr);
     }
+    
     public HR authenticate(String email, String password) {
         HR hr = hrRepository.findByEmail(email);
-        if (hr != null && hr.getPassword().equals(password)) {
+        if (hr != null && passwordEncoder.matches(password, hr.getPassword())) {
             return hr;
         }
         return null;
