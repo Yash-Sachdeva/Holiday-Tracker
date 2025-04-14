@@ -31,7 +31,7 @@ const HolidayManagement = () => {
 
   const fetchClients = async () => {
     try {
-      const response = await fetch('http://localhost:8080/auth/client/all', {
+      const response = await fetch('http://localhost:8080/client/all', {
         credentials: 'include'
       });
       if (!response.ok) throw new Error('Failed to fetch clients');

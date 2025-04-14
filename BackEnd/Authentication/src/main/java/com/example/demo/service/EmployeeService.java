@@ -20,7 +20,7 @@ public class EmployeeService {
 
     public Employee registerEmployee(Employee employee) {
         // Check if employee with same email already exists
-        Employee existingEmployee = employeeRepository.findByEmail(employee.getEmail().toLowerCase());
+        Employee existingEmployee = employeeRepository.findByEmail(employee.getEmail().toLowerCase()).orElse(null);
         if (existingEmployee != null) {
             throw new RuntimeException("Employee with email " + employee.getEmail() + " already exists");
         }
@@ -38,29 +38,18 @@ public class EmployeeService {
         // Check if email is being changed and if new email already exists
         String newEmail = employee.getEmail().toLowerCase();
         if (!existingEmployee.getEmail().equals(newEmail)) {
-            Employee emailCheck = employeeRepository.findByEmail(newEmail);
+            Employee emailCheck = employeeRepository.findByEmail(newEmail).orElse(null);
             if (emailCheck != null && !emailCheck.getEid().equals(employee.getEid())) {
                 throw new RuntimeException("Employee with email " + employee.getEmail() + " already exists");
             }
         }
-        
-        // Preserve the hrId from the existing employee
-        employee.setHrId(existingEmployee.getHrId());
-        employee.setEmail(newEmail);
-        
-        return employeeRepository.save(employee);
-    }
 
-    public Employee authenticate(String email, String password) {
-        Employee employee = employeeRepository.findByEmail(email);
-        if (employee != null && passwordEncoder.matches(password, employee.getPassword())) {
-             return employee;
-        }
-        return null;
+        employee.setEmail(newEmail);
+        return employeeRepository.save(employee);
     }
     
     public Employee getEmployeeByEmail(String email) {
-        return employeeRepository.findByEmail(email);
+        return employeeRepository.findByEmail(email).orElse(null);
     }
     
     public List<Employee> getAllEmployeeUnderId(Long id){

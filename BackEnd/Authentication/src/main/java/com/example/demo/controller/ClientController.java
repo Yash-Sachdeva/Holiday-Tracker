@@ -13,17 +13,17 @@ import com.example.demo.entities.Client;
 import com.example.demo.service.ClientService;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/client")
 public class ClientController {
 
     @Autowired
     private ClientService clientService;
 
-    @PostMapping("/register/client")
+    @PostMapping("/register-client")
     public Client registerClient(@RequestBody Client client) {
         return clientService.registerClient(client);
     }
-    @GetMapping("client/all")
+    @GetMapping("/all")
     public List<Client> getClients()
     {
     	return clientService.getClients();

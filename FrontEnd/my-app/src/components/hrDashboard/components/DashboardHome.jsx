@@ -18,14 +18,14 @@ const DashboardHome = () => {
       setLoading(true);
       
       // Fetch employees under the logged-in HR
-      const employeesResponse = await fetch('http://localhost:8080/auth/all/employee', {
+      const employeesResponse = await fetch('http://localhost:8080/hr/all-employee', {
         credentials: 'include'
       });
       if (!employeesResponse.ok) throw new Error('Failed to fetch employees');
       const employeesData = await employeesResponse.json();
 
       // Get HR session info
-      const sessionResponse = await fetch('http://localhost:8080/auth/session', {
+      const sessionResponse = await fetch('http://localhost:8080/hr/session', {
         credentials: 'include'
       });
       if (sessionResponse.ok) {

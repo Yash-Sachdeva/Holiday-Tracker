@@ -5,7 +5,6 @@ import Sidebar from './components/Sidebar';
 import DashboardHome from './components/DashboardHome';
 import HRManagement from './components/HRManagement';
 import ClientManagement from './components/ClientManagement';
-import MobileMenuToggle from './components/MobileMenuToggle';
 import './styles/AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -38,6 +37,7 @@ const AdminDashboard = () => {
   return (
     <div className="dashboard-container">
       <div className="dashboard-content">
+        
         <Sidebar 
           isOpen={isMobileMenuOpen} 
           onClose={() => setIsMobileMenuOpen(false)}
@@ -53,7 +53,11 @@ const AdminDashboard = () => {
             <Route path="hr-management" element={<HRManagement />} />
             <Route path="client-management" element={<ClientManagement />} />
           </Routes>
+          <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
         </main>
+        
       </div>
     </div>
   );

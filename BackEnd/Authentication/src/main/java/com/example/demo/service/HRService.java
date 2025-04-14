@@ -17,20 +17,13 @@ public class HRService {
     private HRRepository hrRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+  
     public HR registerHR(HR hr) {
     	hr.setEmail(hr.getEmail().toLowerCase());
     	hr.setPassword(passwordEncoder.encode(hr.getPassword()));
         return hrRepository.save(hr);
     }
     
-    public HR authenticate(String email, String password) {
-        HR hr = hrRepository.findByEmail(email);
-        if (hr != null && passwordEncoder.matches(password, hr.getPassword())) {
-            return hr;
-        }
-        return null;
-    }
 
     public String deleteHR(HR e) {
     	if(hrRepository.findByEmail(e.getEmail())==null)
@@ -42,7 +35,7 @@ public class HRService {
     }
     
     public HR getHRByEmail(String email) {
-    	return hrRepository.findByEmail(email);
+    	return hrRepository.findByEmail(email).orElse(null);
     }
     
     public List<HR> getAllHR(){

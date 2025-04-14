@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.demo.entities.Admin;
 import com.example.demo.repos.AdminRepository;
@@ -11,21 +12,17 @@ public class AdminService {
     @Autowired
     private AdminRepository adminRepository;
     
+    @Autowired 
+    private PasswordEncoder passwordEncoder;
+    
     public Admin registerAdmin(Admin admin) {
         admin.setEmail(admin.getEmail().toLowerCase());
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
         return adminRepository.save(admin);
     }
     
-    public Admin authenticate(String email, String password) {
-        Admin admin = adminRepository.findByEmail(email);
-        if (admin != null && admin.getPassword().equals(password)) {
-            return admin;
-        }
-        return null;
-    }
-    
     public Admin getAdminByEmail(String email) {
-        return adminRepository.findByEmail(email);
+        return adminRepository.findByEmail(email).orElse(null);
     }
     
     public List<Admin> getAllAdmins() {
@@ -49,7 +46,7 @@ public class AdminService {
     }
     
     public boolean deleteAdmin(Admin admin) {
-        Admin existingAdmin = adminRepository.findByEmail(admin.getEmail());
+        Admin existingAdmin = adminRepository.findByEmail(admin.getEmail()).orElse(null);
         if (existingAdmin == null) {
             return false;
         } else {

@@ -15,8 +15,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkSession = async () => {
     try {
-      // Try admin session
-      const adminResponse = await fetch('http://localhost:8080/auth/admin/session', {
+      const adminResponse = await fetch('http://localhost:8080/admin/session', {
         credentials: 'include'
       });
       const adminData = await adminResponse.text();
@@ -27,9 +26,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(false);
         return;
       }
-
-      // Try HR session
-      const hrResponse = await fetch('http://localhost:8080/auth/session/hr', {
+      const hrResponse = await fetch('http://localhost:8080/hr/session', {
         credentials: 'include'
       });
       const hrData = await hrResponse.text();
@@ -41,8 +38,7 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      // Try employee session
-      const employeeResponse = await fetch('http://localhost:8080/auth/session/employee', {
+      const employeeResponse = await fetch('http://localhost:8080/employee/session', {
         credentials: 'include'
       });
       const employeeData = await employeeResponse.text();
@@ -53,8 +49,6 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(false);
         return;
       }
-
-      // If no session is found
       setIsAuthenticated(false);
       setUserRole(null);
     } catch (error) {
@@ -73,24 +67,15 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      let endpoint;
-      switch (userRole) {
-        case 'HR':
-          endpoint = 'http://localhost:8080/auth/logout/hr';
-          break;
-        case 'ADMIN':
-          endpoint = 'http://localhost:8080/auth/admin/logout';
-          break;
-        case 'EMPLOYEE':
-          endpoint = 'http://localhost:8080/auth/logout/employee';
-          break;
-        default:
-          endpoint = 'http://localhost:8080/auth/logout';
-      }
-
-      await fetch(endpoint, {
+      const response = await fetch('http://localhost:8080/logout', {
+        method: 'POST',
         credentials: 'include'
       });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Logout failed:', errorText);
+      }
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -98,6 +83,7 @@ export const AuthProvider = ({ children }) => {
       setUserRole(null);
     }
   };
+  
 
   const value = {
     isAuthenticated,
