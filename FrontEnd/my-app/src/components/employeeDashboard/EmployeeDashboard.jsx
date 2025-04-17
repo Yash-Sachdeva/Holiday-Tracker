@@ -130,7 +130,7 @@ const EmployeeDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:8080/logout', {
+      const response = await fetch('http://localhost:8000/as/logout', {
         method: 'POST',
         credentials: 'include'
       });

@@ -34,7 +34,7 @@ const EmpLogin = () => {
       form.append('username', formData.email);
       form.append('password', formData.password);
   
-      const response = await fetch('http://localhost:8080/login', {
+      const response = await fetch('http://localhost:8000/as/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

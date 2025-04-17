@@ -15,37 +15,14 @@ export const AuthProvider = ({ children }) => {
 
   const checkSession = async () => {
     try {
-      const adminResponse = await fetch('http://localhost:8080/admin/session', {
+      const Response = await fetch('http://localhost:8000/as/auth/session', {
         credentials: 'include'
       });
-      const adminData = await adminResponse.text();
+      const data = await Response.json();
       
-      if (adminData.includes('User is logged in')) {
+      if (data.isLoggedIn) {
         setIsAuthenticated(true);
-        setUserRole('ADMIN');
-        setIsLoading(false);
-        return;
-      }
-      const hrResponse = await fetch('http://localhost:8080/hr/session', {
-        credentials: 'include'
-      });
-      const hrData = await hrResponse.text();
-
-      if (hrData.includes('User is logged in')) {
-        setIsAuthenticated(true);
-        setUserRole('HR');
-        setIsLoading(false);
-        return;
-      }
-
-      const employeeResponse = await fetch('http://localhost:8080/employee/session', {
-        credentials: 'include'
-      });
-      const employeeData = await employeeResponse.text();
-      
-      if (employeeData.includes('User is logged in')) {
-        setIsAuthenticated(true);
-        setUserRole('EMPLOYEE');
+        setUserRole(data.role.replace('ROLE_', ''));
         setIsLoading(false);
         return;
       }
@@ -67,7 +44,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      const response = await fetch('http://localhost:8080/logout', {
+      const response = await fetch('http://localhost:8000/as/logout', {
         method: 'POST',
         credentials: 'include'
       });
