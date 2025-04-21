@@ -16,6 +16,12 @@ const EmpLogin = () => {
   if (isAuthenticated && userRole === 'EMPLOYEE') {
     return <Navigate to="/employee-dashboard" />;
   }
+  if (isAuthenticated && userRole === 'HR') {
+    return <Navigate to="/hr-dashboard" />;
+  }
+  if (isAuthenticated && userRole === 'ADMIN') {
+    return <Navigate to="/admin-dashboard" />;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;

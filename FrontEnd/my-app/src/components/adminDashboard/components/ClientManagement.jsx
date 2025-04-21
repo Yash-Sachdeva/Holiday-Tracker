@@ -21,7 +21,7 @@ const ClientManagement = () => {
 
   const fetchClients = async () => {
     try {
-      const response = await fetch('http://localhost:8080/admin/clients', {
+      const response = await fetch('http://localhost:8000/cs/client/clients', {
         credentials: 'include'
       });
       if (!response.ok) throw new Error('Failed to fetch clients');
