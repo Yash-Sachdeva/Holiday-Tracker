@@ -254,7 +254,7 @@ function App() {
               <AdminDashboard />
             </ProtectedRoute>
           } />
-          <Route path="/employee-dashboard" element={
+          <Route path="/employee-dashboard/*" element={
             <ProtectedRoute userType="employee">
               <EmployeeDashboard />
             </ProtectedRoute>
