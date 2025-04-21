@@ -21,7 +21,7 @@ public class SecurityConfig {
             .csrf().disable()
             .authorizeHttpRequests()
             .requestMatchers("/employee/profile").hasRole("EMPLOYEE")
-                .requestMatchers("/employee/**").hasRole("HR")
+                .requestMatchers("/employee/**").hasAnyRole("HR","ADMIN")
                 .anyRequest().authenticated();
 
         return http.build();
