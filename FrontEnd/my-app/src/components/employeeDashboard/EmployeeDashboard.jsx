@@ -52,7 +52,7 @@ const EmployeeDashboard = () => {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/auth/profile/employee`, {
+      const response = await fetch(`http://localhost:8080/employee/profile`, {
         credentials: 'include'
       });
       
@@ -130,8 +130,8 @@ const EmployeeDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:8080/auth/logout/employee', {
-        method: 'GET',
+      const response = await fetch('http://localhost:8000/as/logout', {
+        method: 'POST',
         credentials: 'include'
       });
       

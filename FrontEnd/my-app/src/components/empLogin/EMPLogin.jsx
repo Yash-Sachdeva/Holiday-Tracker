@@ -28,22 +28,36 @@ const EmpLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+  
     try {
-      const response = await fetch('http://localhost:8080/auth/login/employee', {
+      const form = new URLSearchParams();
+      form.append('username', formData.email);
+      form.append('password', formData.password);
+  
+      const response = await fetch('http://localhost:8000/as/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify(formData),
+        body: form,
         credentials: 'include'
       });
-
-      const data = await response.text();
-
-      if (response.ok && data === "Login successful!") {
-        login('EMPLOYEE');
-        navigate('/employee-dashboard');
+  
+      const data = await response.json();
+  
+      if (response.ok && data.message === "Login successful") {
+        const userRole = data.role;
+        login(userRole); // from context
+  
+        if (userRole === 'EMPLOYEE') {
+          navigate('/employee-dashboard');
+        } else if (userRole === 'HR') {
+          navigate('/hr-dashboard');
+        } else if (userRole === 'ADMIN') {
+          navigate('/admin-dashboard');
+        } else {
+          setError("Unknown role. Access denied.");
+        }
       } else {
         setError('Invalid credentials. Please try again.');
       }
@@ -51,6 +65,7 @@ const EmpLogin = () => {
       setError('Network error. Please try again later.');
     }
   };
+  
 
   return (
     <div className="login-container">
@@ -58,7 +73,7 @@ const EmpLogin = () => {
         <button onClick={() => navigate('/')} className="back-button">
           ←
         </button>
-        <h2>Employee Login</h2>
+        <h2>Welcome to the Holiday Portal!</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
